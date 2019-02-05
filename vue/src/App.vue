@@ -18,7 +18,7 @@
       <div class="row">
         <div class="col">
           <sign-in v-if="sign === 'sign-in'"></sign-in>
-          <sign-up v-else></sign-up>
+          <sign-up v-else @regSuccess="sign = $event"></sign-up>
         </div>
       </div>
     </div>
