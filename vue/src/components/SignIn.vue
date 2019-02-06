@@ -33,7 +33,6 @@
               mainPage: true,
               complete: true
             }
-            console.log(sett);
             this.$emit('addUser', sett);
           })
       }

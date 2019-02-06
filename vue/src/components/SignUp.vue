@@ -21,7 +21,7 @@
 
 <script>
   export default {
-    name: 'sing-up',
+    name: 'sign-up',
     data() {
       return {
         user: {
