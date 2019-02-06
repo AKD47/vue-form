@@ -19,7 +19,8 @@
         user: {
           email: '',
           password: ''
-        }
+        },
+        error: false
       }
     },
     methods: {
@@ -35,6 +36,9 @@
             }
             this.$emit('addUser', sett);
           })
+      },
+      signOut() {
+        firebase.auth().signOut()
       }
     }
   }

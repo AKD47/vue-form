@@ -9,7 +9,10 @@
                 <button class="btn btn-outline-success mr-3" type="button" @click="switchSign('sign-in')">Войти</button>
                 <button class="btn btn-outline-success" type="button" @click="switchSign('sign-up')">Регистрация</button>
               </div>
-              <span class="user" v-else>{{ email }}</span>
+              <div class="d-flex justify-content-end" v-else>
+                <span class="user" >{{ email }}</span>
+                <button class="btn btn-outline-success" @click="signOut">Выйти</button>
+              </div>
             </form>
           </nav>
         </div>
@@ -54,6 +57,11 @@
 
 <style lang="scss">
   .user {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    position: relative;
     color: #fff;
+    margin-right: 20px;
   }
 </style>
