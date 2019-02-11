@@ -6,7 +6,8 @@
     </div>
     <div class="form-group">
       <label for="password">Ваш пароль:</label>
-      <input type="password" class="form-control" id="password" placeholder="Введите пароль:" v-model="user.password" required>
+      <input type="password" class="form-control" id="password" placeholder="Введите пароль:" v-model="user.password"
+             required>
     </div>
     <button type="submit" class="btn btn-primary">Войти</button>
   </form>
@@ -26,7 +27,7 @@
     methods: {
       enterUser() {
         firebase.auth().signInWithEmailAndPassword(this.user.email, this.user.password)
-          .then( response => {
+          .then(response => {
             console.log(response);
             const sett = {
               email: response.user.email,
@@ -36,9 +37,6 @@
             }
             this.$emit('addUser', sett);
           })
-      },
-      signOut() {
-        firebase.auth().signOut()
       }
     }
   }
