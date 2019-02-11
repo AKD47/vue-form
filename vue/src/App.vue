@@ -131,6 +131,19 @@
         }
       }
     }
+
+    &__box {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: relative;
+      float: left;
+      width: 100%;
+
+      .form-group {
+        width: 100%;
+      }
+    }
   }
 
   .user {

@@ -1,5 +1,5 @@
 <template>
-  <form class="" @submit.prevent="registerUser">
+  <form class="main__box" @submit.prevent="registerUser">
     <div class="alert alert-danger" v-if="error">
       <strong>Oops!</strong>
       {{ messageERR }}
