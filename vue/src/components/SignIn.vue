@@ -1,15 +1,19 @@
 <template>
-  <form class="mt-5" @submit.prevent="enterUser">
-    <div class="form-group">
-      <label for="email">Ваш email:</label>
-      <input type="email" class="form-control" id="email" placeholder="Ввведите email:" v-model="user.email" required>
+  <form class="" @submit.prevent="enterUser">
+    <div class="alert alert-danger" v-if="error">
+      <strong>Oops!</strong>
+      {{ messageERR }}
     </div>
     <div class="form-group">
-      <label for="password">Ваш пароль:</label>
-      <input type="password" class="form-control" id="password" placeholder="Введите пароль:" v-model="user.password"
+      <label for="email">User email:</label>
+      <input type="email" class="form-control" id="email" placeholder="Enter email:" v-model="user.email" required>
+    </div>
+    <div class="form-group">
+      <label for="password">User password:</label>
+      <input type="password" class="form-control" id="password" placeholder="Enter password:" v-model="user.password"
              required>
     </div>
-    <button type="submit" class="btn btn-primary">Войти</button>
+    <button type="submit" class="btn btn-primary">Log In</button>
   </form>
 </template>
 
@@ -21,11 +25,13 @@
           email: '',
           password: ''
         },
-        error: false
+        error: false,
+        messageERR: ''
       }
     },
     methods: {
       enterUser() {
+        let msg = '';
         firebase.auth().signInWithEmailAndPassword(this.user.email, this.user.password)
           .then(response => {
             console.log(response);
@@ -36,6 +42,14 @@
               complete: true
             }
             this.$emit('addUser', sett);
+          })
+          .catch( error => {
+            console.log(error);
+            if (this.error = true) {
+              msg = error.message;
+              console.log(msg);
+              this.messageERR = msg;
+            }
           })
       }
     }

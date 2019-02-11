@@ -1,22 +1,22 @@
 <template>
-  <form class="mt-5" @submit.prevent="registerUser">
+  <form class="" @submit.prevent="registerUser">
     <div class="alert alert-danger" v-if="error">
-      <strong>Упс!</strong>
+      <strong>Oops!</strong>
       {{ messageERR }}
     </div>
     <div class="form-group">
-      <label for="email">Ваш email:</label>
-      <input type="email" class="form-control" id="email" placeholder="Ввведите email:" v-model="user.email" required>
+      <label for="email">Your email:</label>
+      <input type="email" class="form-control" id="email" placeholder="Enter email:" v-model="user.email" required>
     </div>
     <div class="form-group">
-      <label for="password">Ваш пароль (минимум 6 символов):</label>
-      <input type="password" class="form-control" id="password" placeholder="Введите пароль:" v-model="user.password" required>
+      <label for="password">Your password (min 6 symbols):</label>
+      <input type="password" class="form-control" id="password" placeholder="Enter password:" v-model="user.password" required>
     </div>
     <div class="form-group">
-      <label for="password2">Повторите пароль:</label>
-      <input type="password" class="form-control" id="password2" placeholder="Повторите пароль:" v-model="user.confirmPassword" required>
+      <label for="password2">Confirm password:</label>
+      <input type="password" class="form-control" id="password2" placeholder="Confirm password:" v-model="user.confirmPassword" required>
     </div>
-    <button type="submit" class="btn btn-primary">Зарегистриваться</button>
+    <button type="submit" class="btn btn-primary">Registration</button>
   </form>
 </template>
 
@@ -39,7 +39,7 @@
         let msg = '';
         if(this.user.password !== this.user.confirmPassword || this.user.password.length < 6) {
           this.error = true;
-          this.messageERR = 'Пароли не совпадают или неправильно введены'
+          this.messageERR = 'Passwords do not match or are incorrectly entered.'
         } else {
           firebase.auth().createUserWithEmailAndPassword(this.user.email, this.user.password)
             .then( () => {
