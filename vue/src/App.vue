@@ -24,7 +24,7 @@
       <div class="container" v-else>
         <div class="row">
           <div class="col-lg-6 col-sm-6 col-xs-12 mx-auto">
-            <user></user>
+            <main-page :uid="uid"></main-page>
           </div>
         </div>
       </div>
@@ -35,7 +35,7 @@
 <script>
   import SignIn from './components/SignIn.vue'
   import SignUp from './components/SignUp.vue'
-  import User from './components/User'
+  import MainPage from './components/MainPage.vue'
   export default {
     name: 'app',
     data() {
@@ -50,7 +50,7 @@
     components: {
       SignIn,
       SignUp,
-      User
+      MainPage
     },
     methods: {
       switchSign(currentSign) {
