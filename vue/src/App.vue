@@ -9,15 +9,23 @@
                   <span class="main__logo"></span>
                   <sign-in v-if="sign === 'sign-in'" @addUser="isMainPage = $event.mainPage, signComplete = $event.complete, email = $event.email, uid = $event.uid"></sign-in>
                   <sign-up v-else @regSuccess="sign = $event"></sign-up>
-                  <form class="main__switcher">
-                    <div v-if="!signComplete">
+                  <form class="main__switcher"v-if="!signComplete">
+                    <div>
                       <p class="main__switcher--element" v-if="sign === 'sign-up'">Have an account? <a href="#" @click="switchSign('sign-in')">Log In</a></p>
                       <p class="main__switcher--element" v-else>No account? <a href="#" @click="switchSign('sign-up')">Registration</a></p>
                     </div>
                   </form>
+
                 </div>
               </div>
             </div>
+        </div>
+      </div>
+      <div class="container" v-else>
+        <div class="row">
+          <div class="col-lg-6 col-sm-6 col-xs-12 mx-auto">
+            <user></user>
+          </div>
         </div>
       </div>
     </div>
@@ -27,6 +35,7 @@
 <script>
   import SignIn from './components/SignIn.vue'
   import SignUp from './components/SignUp.vue'
+  import User from './components/User'
   export default {
     name: 'app',
     data() {
@@ -40,7 +49,8 @@
     },
     components: {
       SignIn,
-      SignUp
+      SignUp,
+      User
     },
     methods: {
       switchSign(currentSign) {

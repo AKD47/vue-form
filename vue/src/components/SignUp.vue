@@ -4,6 +4,10 @@
       <strong>Oops!</strong>
       {{ messageERR }}
     </div>
+    <!--<div class="form-group">-->
+      <!--<label for="name">Your name:</label>-->
+      <!--<input type="text" class="form-control" id="name" placeholder="Enter name:" v-model="user.displayName" required>-->
+    <!--</div>-->
     <div class="form-group">
       <label for="email">Your email:</label>
       <input type="email" class="form-control" id="email" placeholder="Enter email:" v-model="user.email" required>
@@ -26,6 +30,7 @@
     data() {
       return {
         user: {
+          displayName: '',
           email: '',
           password: '',
           confirmPassword: ''
@@ -42,7 +47,7 @@
           this.messageERR = 'Passwords do not match or are incorrectly entered.'
         } else {
           firebase.auth().createUserWithEmailAndPassword(this.user.email, this.user.password)
-            .then( () => {
+            .then( success => {
               this.$emit('regSuccess', 'sign-in');
             })
             .catch( error => {
