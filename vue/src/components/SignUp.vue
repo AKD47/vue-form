@@ -4,10 +4,10 @@
       <strong>Oops!</strong>
       {{ messageERR }}
     </div>
-    <!--<div class="form-group">-->
-      <!--<label for="name">Your name:</label>-->
-      <!--<input type="text" class="form-control" id="name" placeholder="Enter name:" v-model="user.displayName" required>-->
-    <!--</div>-->
+    <div class="form-group">
+      <label for="name">Your name:</label>
+      <input type="text" class="form-control" id="name" placeholder="Enter name:" v-model="user.displayName" required>
+    </div>
     <div class="form-group">
       <label for="email">Your email:</label>
       <input type="email" class="form-control" id="email" placeholder="Enter email:" v-model="user.email" required>
