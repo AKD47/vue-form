@@ -12,11 +12,10 @@
                   <v-client-table
                     :data="tableData"
                     :columns="columns"
-                    :options="options"
-                    >
-                      <a slot="actions" slot-scope="props" :href="props.row.uri">
-                            <button class="btn btn-primary"> active</button>
-                      </a>
+                    :options="options">
+                    <a slot="actions" slot-scope="props" :href="props.row.uri">
+                            <button class="btn btn-primary">active</button>
+                    </a>
                   </v-client-table>
                 </vue-data-table>
               </div>
