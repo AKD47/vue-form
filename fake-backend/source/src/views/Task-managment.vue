@@ -59,30 +59,18 @@
                             <div class="col-lg-12 grid-margin">
                                 <div class="card">
                                     <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table aria-busy="false" aria-colcount="4"
-                                                   class="table b-table table-striped table-hover">
-                                                <thead >
-                                                <tr>
-                                                    <th>Task name</th>
-                                                    <th>Schedule</th>
-                                                    <th>Website</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody >
-                                                <tr v-for="loans in loans">
-                                                    <td v-for="loan in loans">{{loan}}</td>
-                                                    <td><button class="btn btn-outline-success">Enabled</button> <button class="btn btn-outline-danger">Disabled</button></td>
+                                        <vue-data-table>
+                                            <v-client-table
+                                                    :data="tableData"
+                                                    :columns="columns"
+                                                    :options="options" >
+                                                <a slot="Actions" slot-scope="props" >
+                                                    <button type='button' class='btn btn-success mr-2'>Enabled</button>
+                                                    <button type='button' class='btn btn-danger'>Disabled</button>
+                                                </a>
+                                            </v-client-table>
 
-                                                </tr>
-                                              </tbody>
-                                            </table>
-                                            <div>
-                                                <button @click="prevPage">Previous</button>
-                                                <button @click="nextPage">Next</button>
-                                            </div>
-                                        </div>
+                                        </vue-data-table>
                                     </div>
                                 </div>
                             </div>
@@ -110,35 +98,23 @@
         },
         data() {
             return {
-                loans: ''
-            }
-        },
-        created () {
-            this.$http.get('http://www.json-generator.com/api/json/get/bPYaUAgbtu?indent=2')
-                .then(
-                    response => {
-                this.loans = response.data
-
-        })
-        .catch(function(error){
-                console.log(error)
-            })
-        },
-        methods:{
-            sort:function(s) {
-                //if s == current sort, reverse
-                if(s === this.currentSort) {
-                    this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
+                columns: ['ID', 'TaskName','Schedule','Website', 'Actions'],
+                tableData: [],
+                options: {
+                    headings: {
+                        url: 'URL',
+                        name: 'Name'
+                    },
+                    sortable: ['ID', 'TaskName','Schedule','Website'],
+                    filterable: ['ID', 'TaskName','Schedule','Website']
                 }
-                this.currentSort = s;
-            },
-            nextPage:function() {
-                if((this.currentPage*this.pageSize) < this.cats.length) this.currentPage++;
-            },
-            prevPage:function() {
-                if(this.currentPage > 1) this.currentPage--;
             }
-
+        },
+        mounted() {
+            this.axios.get('http://www.json-generator.com/api/json/get/bOHbvMaBRu?indent=2').then(res => {
+                this.tableData = res.data
+        })
         }
+
     }
 </script>

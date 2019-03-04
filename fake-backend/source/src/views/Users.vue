@@ -21,7 +21,22 @@
                         <div class="col-lg-12 grid-margin">
                             <div class="card">
                                 <div class="card-body">
+                                    <vue-data-table>
+                                        <v-client-table
+                                                :data="tableData"
+                                                :columns="columns"
+                                                :options="options" >
+                                            <a slot="Status" slot-scope="props" >
+                                                <label class='badge badge-success'>Enabled</label>
+                                            </a>
+                                            <a slot="Actions" slot-scope="props" >
+                                                <button type='button' class='btn btn-success mr-2'>Edit</button>
+                                                <button type='button' class='btn btn-primary mr-2'>Disabled</button>
+                                                <button type='button' class='btn btn-danger'>Delete</button>
+                                            </a>
+                                        </v-client-table>
 
+                                    </vue-data-table>
                                 </div>
                             </div>
                         </div>
@@ -71,6 +86,25 @@
             AppHeader,
             AppSidebar,
             AppFooter
+        },
+        data() {
+            return {
+                columns: ['Username', 'Role','Status','Actions'],
+                tableData: [],
+                options: {
+                    headings: {
+                        url: 'URL',
+                        name: 'Name'
+                    },
+                    sortable: ['Username', 'Role'],
+                    filterable: ['Username', 'Role']
+                }
+            }
+        },
+        mounted() {
+            this.axios.get('http://www.json-generator.com/api/json/get/cppjqCmGoO?indent=2').then(res => {
+                this.tableData = res.data
+            })
         }
     }
 </script>

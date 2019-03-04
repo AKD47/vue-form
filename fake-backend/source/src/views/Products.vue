@@ -7,19 +7,22 @@
       <div class="main-panel">
         <div class="content-wrapper">
             <div class="card">
-              <div class="card-body">
-                <vue-data-table>
-                  <v-client-table
-                    :data="tableData"
-                    :columns="columns"
-                    :options="options">
-                    <a slot="actions" slot-scope="props" :href="props.row.uri">
-                            <button class="btn btn-primary">active</button>
-                    </a>
-                  </v-client-table>
-                </vue-data-table>
-              </div>
-            </div>
+            <div class="card-body">
+         <vue-data-table>
+          <v-client-table
+          :data="tableData"
+          :columns="columns"
+          :options="options"
+          >
+  <a slot="actions" slot-scope="props" >
+        <button class="btn btn-primary"> active</button>
+    </a>
+        </v-client-table>
+
+        </vue-data-table>
+
+        </div>
+        </div>
         </div>
         <!-- content wrapper ends -->
         <app-footer/>
@@ -44,20 +47,20 @@ export default {
   },
   data() {
         return {
-            columns: ['website', 'taskName','schedule','actions'],
+            columns: ['ID', 'Name','Category','Cost'],
             tableData: [],
             options: {
                 headings: {
                     url: 'URL',
                     name: 'Name',
                 },
-                sortable: ['marketPlaceName', 'url'],
-                filterable: ['marketPlaceName', 'url']
+                sortable: ['ID', 'Name','Category','Cost'],
+                filterable: ['ID', 'Name','Category','Cost']
             }
         }
     },
     mounted() {
-        this.axios.get('http://www.json-generator.com/api/json/get/ceiYQxyGeW?indent=2').then(res => {
+        this.axios.get('http://www.json-generator.com/api/json/get/bTyWGOlEgO?indent=2').then(res => {
             this.tableData = res.data
     })
     }
