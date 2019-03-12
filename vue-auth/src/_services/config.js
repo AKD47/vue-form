@@ -1,1 +1,0 @@
-global.Host = 'https://backendzenabi.dimatech.org';

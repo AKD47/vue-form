@@ -90,41 +90,41 @@
     },
     data() {
       return {
-        columns: [
-          'username',
-          'role',
-          'status',
-          'actions'
-        ],
-        tableData: [],
-        options: {
-          headings: {
-            username: 'Username',
-            role: 'Role',
-            status: 'Status'
-          },
-          sortable: ['username', 'role', 'status'],
-          filterable: ['username', 'role', 'status']
-        }
-      }
+      //   columns: [
+      //     'username',
+      //     'role',
+      //     'status',
+      //     'actions'
+      //   ],
+      //   tableData: [],
+      //   options: {
+      //     headings: {
+      //       username: 'Username',
+      //       role: 'Role',
+      //       status: 'Status'
+      //     },
+      //     sortable: ['username', 'role', 'status'],
+      //     filterable: ['username', 'role', 'status']
+      //   }
+      // }
     },
     mounted() {
-      this.axios({
-        type: 'GET',
-        url: `${Host}/user`,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      }).then(res => {
-        this.tableData = res.data
-      })
+      // this.axios({
+      //   type: 'GET',
+      //   url: `${Host}/user`,
+      //   headers: {
+      //     Authorization: `Bearer ${localStorage.getItem('token')}`
+      //   }
+      // }).then(res => {
+      //   this.tableData = res.data
+      // })
     },
     methods: {
       register: function () {
-        console.log("Retrieving username");
-        console.log(this.username);
-        console.log(this.password);
-        console.log(this.role);
+        // console.log("Retrieving username");
+        // console.log(this.username);
+        // console.log(this.password);
+        // console.log(this.role);
         let newUser = { username: this.username, password: this.password, role: this.role };
         this.$store.dispatch('register', newUser)
           .then(() => this.$router.replace({name: 'users-managment'}),

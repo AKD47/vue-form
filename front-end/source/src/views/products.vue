@@ -35,24 +35,24 @@ export default {
   },
   data() {
     return {
-      columns: ['id', 'name', 'category', 'cost'],
-      tableData: [],
-      options: {
-        headings: {
-          id: 'ID',
-          name: 'Name',
-          category: 'Category',
-          cost: 'Cost'
-        },
-        sortable: ['id', 'name', 'category', 'cost'],
-        filterable: ['id', 'name', 'category', 'cost']
-      }
+      // columns: ['id', 'name', 'category', 'cost'],
+      // tableData: [],
+      // options: {
+      //   headings: {
+      //     id: 'ID',
+      //     name: 'Name',
+      //     category: 'Category',
+      //     cost: 'Cost'
+      //   },
+      //   sortable: ['id', 'name', 'category', 'cost'],
+      //   filterable: ['id', 'name', 'category', 'cost']
+      // }
     }
   },
   mounted() {
-    this.axios.get(`${Host}/products`).then(res => {
-      this.tableData = res.data
-    })
+    // this.axios.get(`${Host}/products`).then(res => {
+    //   this.tableData = res.data
+    // })
   }
 }
 </script>
