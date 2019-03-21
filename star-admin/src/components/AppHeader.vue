@@ -31,6 +31,8 @@ export default {
       logout: function () {
           let router = this.$router;
           localStorage.removeItem('token');
+          localStorage.removeItem('username');
+          localStorage.removeItem('apiKey');
           router.push({ path: '/login'})
       }
   }

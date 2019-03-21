@@ -90,23 +90,23 @@
     },
     data() {
       return {
-      //   columns: [
-      //     'username',
-      //     'role',
-      //     'status',
-      //     'actions'
-      //   ],
-      //   tableData: [],
-      //   options: {
-      //     headings: {
-      //       username: 'Username',
-      //       role: 'Role',
-      //       status: 'Status'
-      //     },
-      //     sortable: ['username', 'role', 'status'],
-      //     filterable: ['username', 'role', 'status']
-      //   }
-      // }
+        columns: [
+          'username',
+          'role',
+          'status',
+          'actions'
+        ],
+        tableData: [],
+        options: {
+          headings: {
+            username: 'Username',
+            role: 'Role',
+            status: 'Status'
+          },
+          sortable: ['username', 'role', 'status'],
+          filterable: ['username', 'role', 'status']
+        }
+      }
     },
     mounted() {
       // this.axios({

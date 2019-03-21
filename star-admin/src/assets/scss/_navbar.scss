@@ -7,6 +7,7 @@
   -webkit-transition: background $action-transition-duration $action-transition-timing-function;
   -moz-transition: background $action-transition-duration $action-transition-timing-function;
   -ms-transition: background $action-transition-duration $action-transition-timing-function;
+  box-shadow: 2px 6px 4px -6px #127ccc;
 
   .navbar-brand-wrapper {
     transition: width $action-transition-duration $action-transition-timing-function, background $action-transition-duration $action-transition-timing-function;
@@ -16,6 +17,7 @@
     background: $sidebar-light-bg;
     width: $sidebar-width-lg;
     height: $navbar-height;
+    //box-shadow: 2px 6px 4px -6px #127ccc;
 
     .navbar-brand {
       color: $white;

@@ -91,6 +91,9 @@
 @import "mixins/tabs";
 @import "mixins/text";
 
+/*breakpoint*/
+@import "breakpoint/breakpoint";
+
 /*-------------------------------------------------------------------*/
 /* === Core Styles === */
 @import "reset";
@@ -104,6 +107,8 @@
 @import "utilities";
 @import "demo";
 @import "dashboard";
+@import "tables";
+@import "custommodals";
 
 /*-------------------------------------------------------------------*/
 /* === Components === */

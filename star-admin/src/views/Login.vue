@@ -70,18 +70,23 @@ export default {
 	},
 	methods: {
 		login: function() {
-			let router = this.$router; 
+			let router = this.$router;
 			let request = new XMLHttpRequest();
 			request.onreadystatechange = function() {
 				if (request.readyState == 4) {
+				    // console.log(request.response);
 					localStorage.setItem('token', request.response.token);
+					localStorage.setItem('username', request.response.username);
+					localStorage.setItem('apiKey', request.response.apiKey);
+					localStorage.setItem('role', request.response.role);
 					router.push({ path: '/' });
 				}
 			};
-			request.open('POST', 'https://backendzenabi.dimatech.org/login');
+			request.open('POST', `${Host}/login`);
 			request.responseType = 'json';
 			request.setRequestHeader('Content-Type', 'application/json');
 			request.send(JSON.stringify({ username: this.username, password: this.password }));
+			// console.log(JSON.stringify({ username: this.username, password: this.password }))
 		}
 	}
 }

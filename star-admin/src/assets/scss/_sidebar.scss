@@ -137,11 +137,13 @@
 
           .name {
             color: $sidebar-light-profile-name-color;
+            text-transform: uppercase;
           }
 
           .designation {
             color: $sidebar-light-profile-title-color;
             font-size: 0.75rem;
+            //text-transform: lowercase;
           }
         }
 

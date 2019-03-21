@@ -1,8 +1,9 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from './views/Home.vue';
-import Login from './views/Login.vue';
+import Home from './views/Home';
+import Login from './views/Login';
 import Users from './views/Users';
+import Task from './views/Task'
 
 Vue.use(Router)
 
@@ -25,8 +26,17 @@ const router = new Router({
 	  	path: '/users',
 		component: Users,
 		meta: {
-	  		requiresAuth: true
+	  		requiresAuth: true,
+            requiresAdmin: true
 		}
+	},
+	  {
+	  	path: '/task-managment',
+		component: Task,
+          meta: {
+              requiresAuth: true,
+              requiresAdmin: true
+          }
 	  }
   ]
 });
@@ -41,7 +51,19 @@ router.beforeEach((to, from, next) => {
 				query: { redirect: to.fullPath }
 			});
 		} else {
-			next();
+			if(to.matched.some(record => record.meta.requiresAdmin)) {
+				if (localStorage.getItem('role') == 'ADMIN') {
+					next()
+				}
+				else {
+					next({
+                        path: '/login',
+                        query: { redirect: to.fullPath }
+					});
+				}
+			} else {
+				next();
+            }
 		}	
 	} else {
 		next();
