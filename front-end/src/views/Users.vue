@@ -44,21 +44,21 @@
                                                 prop="actions"
                                                 label="Actions"
                                                 width="320">
-                                            <template slot-scope="props">
-                                                <button v-if="props.row.username !== 'superadmin'" class="btn btn-success" @click="showEditModal(props.row.username)">
+                                            <template slot-scope="props" v-if="props.row.username !== 'superadmin'">
+                                                <button class="btn btn-success" @click="showEditModal(props.row.username)">
                                                     Edit
                                                 </button>
                                                 <button  type='button' value="DISABLE"
-                                                        class='btn btn-primary mr-2 ml-2 change-btn statusBtn' id="statusBtn"
-                                                        @click="changeStatus(props.row.username, $event)"
-                                                        v-if="props.row.status == 'ENABLED' && props.row.username !== 'superadmin'">Disable
+                                                         class='btn btn-primary mr-2 ml-2 change-btn statusBtn' id="statusBtn"
+                                                         @click="changeStatus(props.row.username, $event)"
+                                                         v-if="props.row.status == 'ENABLED' && props.row.username !== 'superadmin'">Disable
                                                 </button>
                                                 <button type='button' value="ENABLE"
                                                         class='btn btn-primary mr-2 ml-2 change-btn statusBtn' id="statusBtn"
                                                         @click="changeStatus(props.row.username, $event)"
                                                         v-if="props.row.status == 'DISABLED' && props.row.username !== 'superadmin'">Enable
                                                 </button>
-                                                <button v-if="props.row.username !== 'superadmin'" type='button' class='btn btn-danger'
+                                                <button v-if="props.row.username !== user" type='button' class='btn btn-danger'
                                                         @click="deleteUser(props.row.username)">Delete
                                                 </button>
                                             </template>
@@ -85,14 +85,13 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Role</label>
-
                                     <select class="form-control" id="createRole" v-model="role">
                                         <option value="ADMIN">Admin</option>
                                         <option value="USER">User</option>
                                     </select>
                                 </div>
                                 <div class="modal-footer modal__footer">
-                                    <button type="submit" class="btn btn-primary">Confirm</button>
+                                    <button type="submit" id="submitAddUser" class="btn btn-primary">Confirm</button>
                                 </div>
                         </form>
                     </div>
@@ -136,6 +135,7 @@
         name: "users",
         data() {
           return {
+              user: '',
               columns: [
                   'username',
                   'role',
@@ -144,6 +144,7 @@
               ],
               tableData: [],
               loading: true
+              // isDisabled: false
           }
         },
         components: {
@@ -152,6 +153,10 @@
             AppFooter
         },
         mounted() {
+            if (localStorage.username) {
+                this.user = localStorage.username;
+                console.log(this.user);
+            }
             this.loadUsers();
             // this.flipButton();
         },
@@ -198,6 +203,8 @@
             openUserModal: function () {
               let modal = document.getElementById('userModal');
               let close = document.getElementById('closeUser');
+              let submitAddUser = document.getElementById('submitAddUser');
+              submitAddUser.disabled = false;
 
               document.querySelectorAll('#createUsername, #createPassword, #createRole').forEach(el=>el.value = '');
 
@@ -219,6 +226,9 @@
                     role: this.role,
                     status: 'ENABLED'
                 };
+                let submitAddUser = document.getElementById('submitAddUser');
+                submitAddUser.disabled = true;
+                // console.log(submitAddUser);
                 let myRequest = new XMLHttpRequest();
                 myRequest.onreadystatechange = function(v) {
                     try {
@@ -316,7 +326,6 @@
             changeStatus: function (targetUsername, ev) {
                 let changedUser = this.tableData.find((item) => item.username === targetUsername);
                 let changedUserIndex = this.tableData.findIndex((item) => item.username === targetUsername);
-
                 let val = ev.srcElement.getAttribute("value");
                 let info = {};
                 info["action"] = 'updateUser';
@@ -418,6 +427,8 @@
                 // let userRole = document.getElementById('editUserRole');
                 let submit = document.getElementById('submitUserUpdate');
                 let result = document.getElementById('result');
+
+                submit.disabled = false;
                 // inputUsername.setAttribute('value', editUser.username);
                 // userRole.setAttribute('value', editUser.role);
                 // console.log(editUser.role);
@@ -474,6 +485,8 @@
                 editInfo['targetUsername'] = this.tableData[targetUserIndex].username;
                 editInfo['newUsername'] = paramsUser.username;
                 editInfo['newRole'] = paramsUser.role;
+                let submit = document.getElementById('submitUserUpdate');
+                submit.disabled = true;
                 let editRequest = new XMLHttpRequest();
                 editRequest.onreadystatechange = function(v) {
                     try {
@@ -528,4 +541,7 @@
     .modal__close{
         display: none;
     }
+    /*#submitUserUpdate:disabled {*/
+        /*opacity: 0.7;*/
+    /*}*/
 </style>

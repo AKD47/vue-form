@@ -162,9 +162,9 @@
                   //     // event.preventDefault();
                   //     alert.innerText = 'the limit number can not have a negative value!';
                   // }
-                  if(TaskLimit.value < 0) {
+                  if(TaskLimit.value < 0 || TaskLimit.value.length == ' ') {
                       // console.log(111);
-                      alert.innerText = 'the limit number can not have a negative value!';
+                      alert.innerText = 'the limit number can not have a negative or empty value!';
                       // console.log(alert);
                       // v.changeTask(targetTaskIndex);
                       // modal.setAttribute("style", "z-index:-1; opacity: 0;");
