@@ -25,7 +25,7 @@
                         <div class="form-group">
                           <label for="password">Password</label>
                           <input type="password" class="form-control" v-model="password" name="new-password" autocomplete="off" id="password" placeholder="Password">
-                          <i class="mdi mdi-eye"></i>
+                          <i @click="showPass" class="mdi mdi-eye"></i>
                         </div>
                         <div class="mt-5">
                           <button class="btn btn-block btn-primary btn-lg font-weight-medium" type="submit">Login</button>
@@ -116,6 +116,15 @@ export default {
             //     message.classList.remove('show-massage');
             //     message.innerText = ' ';
             // }, 5000)
+        },
+        showPass: function () {
+            event.preventDefault();
+            let pass = document.getElementById('password');
+            if (pass.type === "password") {
+                pass.type = "text";
+            } else {
+                pass.type = "password";
+            }
         },
 	}
 }

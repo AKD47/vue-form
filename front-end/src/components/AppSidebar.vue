@@ -3,7 +3,7 @@
   <section class="app-sidebar">
     <nav class="sidebar sidebar-offcanvas" id="sidebar">
       <ul v-if="role == 'ADMIN'" class="nav">
-           <li class="nav-item nav-profile">
+            <li class="nav-item nav-profile">
                <div class="nav-link">
                    <div class="profile-name">
                        <p class="name">{{this.user}}</p>
@@ -11,28 +11,28 @@
                    </div>
                </div>
            </li>
-        <!--<li class="nav-item">-->
-          <!--<router-link class="nav-link" to="/products">-->
-            <!--<i class="menu-icon mdi mdi-television"></i>-->
-            <!--<span class="menu-title">Products</span>-->
-            <!--<i class="menu-arrow"></i>-->
-          <!--</router-link>-->
-        <!--</li>-->
-       <li class="nav-item">
+            <!--<li class="nav-item">-->
+              <!--<router-link class="nav-link" to="/products">-->
+                <!--<i class="menu-icon mdi mdi-television"></i>-->
+                <!--<span class="menu-title">Products</span>-->
+                <!--<i class="menu-arrow"></i>-->
+              <!--</router-link>-->
+            <!--</li>-->
+            <li class="nav-item">
            <router-link class="nav-link" to="/">
                   <i class="menu-icon mdi mdi-television"></i>
                   <span class="menu-title">Task run</span>
                   <i class="menu-arrow"></i>
            </router-link>
         </li>
-        <li class="nav-item">
+            <li class="nav-item">
           <router-link class="nav-link" to="/task-managment">
             <i class="menu-icon mdi mdi-notification-clear-all"></i>
             <span class="menu-title">Task-managment</span>
             <i class="menu-arrow"></i>
           </router-link>
         </li>
-        <li class="nav-item">
+            <li class="nav-item">
           <router-link class="nav-link" to="/users">
             <i class="menu-icon mdi mdi-account"></i>
             <span class="menu-title">Users</span>
@@ -64,11 +64,9 @@
                   <!--</router-link>-->
             <!--</li>-->
         </ul>
-      <button @click="revokeApiKey" class="btn btn-block btn-primary btn-lg font-weight-medium w-75 app-sidebar--btn">Revoke API key</button>
-      <button @click="changePasswordModal" class="btn btn-block btn-primary btn-lg font-weight-medium w-75 app-sidebar--btn">Change password</button>
-      <a class="swagger-logo" target="_blank" href="https://backendzenabi.dimatech.org/swagger-ui.html#/RestAPI">
-         <!--<img src="../assets/images/Swagger-logo.png" alt="">-->
-      </a>
+      <button v-if="user !== 'superadmin'" @click="revokeApiKey" class="btn btn-block btn-primary btn-lg font-weight-medium w-75 app-sidebar--btn">Revoke API key</button>
+      <button v-if="user !== 'superadmin'" @click="changePasswordModal" class="btn btn-block btn-primary btn-lg font-weight-medium w-75 app-sidebar--btn">Change password</button>
+      <a class="swagger-logo" target="_blank" href="https://backendzenabi.dimatech.org/swagger-ui.html#/RestAPI"></a>
     </nav>
       <div id="changePasswordModal" class="pass-modal" ref="modal">
           <div class="pass-modal__content">

@@ -102,19 +102,20 @@
                 <div class="product-modal__content">
                     <span class="close product-modal__close" id="closeEditModal">x</span>
                     <div class="modal-body product-modal__body">
-                        <div class="form-group">
-                            <div class="form-group">
-                                <label>Username</label>
-                                <input type="text" value="" id="editUsername" required class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label>Role</label>
-                                <select id="editUserRole" class="form-control" >
-                                    <option value="ADMIN">Admin</option>
-                                    <option value="USER">User</option>
-                                </select>
-                            </div>
-                        </div>
+                        <div id="result" class="form-group"></div>
+                        <!--<div class="form-group">-->
+                            <!--<div class="form-group">-->
+                                <!--<label>Username</label>-->
+                                <!--<input type="text" id="editUsername" required class="form-control">-->
+                            <!--</div>-->
+                            <!--<div class="form-group">-->
+                                <!--<label>Role</label>-->
+                                <!--<select id="editUserRole" class="form-control" >-->
+                                    <!--<option value="ADMIN">Admin</option>-->
+                                    <!--<option value="USER">User</option>-->
+                                <!--</select>-->
+                            <!--</div>-->
+                        <!--</div>-->
                         <div class="modal-footer product-modal__footer">
                             <button type="submit" class="btn btn-primary" id="submitUserUpdate">Confirm</button>
                         </div>
@@ -266,7 +267,6 @@
             deleteUser: function (user) {
                 let deleteUser = this.tableData.find((item) => item.username === user);
                 let deleteUserIndex = this.tableData.findIndex((item) => item.username === user);
-
                 let deleteRequest = new XMLHttpRequest();
                 deleteRequest.onreadystatechange = function (v) {
                     if (deleteRequest.readyState == 4) {
@@ -414,22 +414,54 @@
                 let targetUserIndex = this.tableData.findIndex((item) => item.username === edit);
                 let modal = document.getElementById('productModal');
                 let close = document.getElementById("closeEditModal");
-                let inputUsername = document.querySelector('#editUsername');
+                // let inputUsername = document.getElementById('editUsername');
+                // let userRole = document.getElementById('editUserRole');
                 let submit = document.getElementById('submitUserUpdate');
-                inputUsername.setAttribute('value', editUser.username);
+                let result = document.getElementById('result');
+                // inputUsername.setAttribute('value', editUser.username);
+                // userRole.setAttribute('value', editUser.role);
+                // console.log(editUser.role);
+
+                if ( editUser.role != 'ADMIN' ) {
+                    result.innerHTML = `<div class="form-group">
+                                        <label>Username</label>
+                                        <input type="text" value="${editUser.username}" id="editUsername" required class="form-control">
+                                    </div>
+                                    <div class="form-group"><label>Role</label>
+                                        <select id="editUserRole" value="${editUser.role}" class="form-control" >
+                                            <option value="ADMIN">Admin</option>
+                                            <option selected value="USER">User</option>
+                                        </select>
+                                    </div>`;
+                } else {
+                    result.innerHTML = `<div class="form-group">
+                                        <label>Username</label>
+                                        <input type="text" value="${editUser.username}" id="editUsername" required class="form-control">
+                                    </div>
+                                    <div class="form-group"><label>Role</label>
+                                        <select id="editUserRole" value="${editUser.role}" class="form-control" >
+                                            <option selected value="ADMIN">Admin</option>
+                                            <option value="USER">User</option>
+                                        </select>
+                                    </div>`;
+                }
 
                 modal.classList.remove('modal__close');
                 modal.setAttribute("style", "z-index:9999; opacity: 1;");
                 close.onclick = function() {
                     modal.setAttribute("style", "z-index:-1; opacity: 0;");
+                    result.innerHTML = " ";
                 };
                 window.onclick = function(event) {
                     if (event.target == modal) {
                         modal.setAttribute("style", "z-index:-1; opacity: 0;");
+                        result.innerHTML = " ";
                     }
                 };
                 submit.onclick = function(v, event) {
+                    modal.setAttribute("style", "z-index:-1; opacity: 0;");
                     v.changeUser(targetUserIndex);
+                    result.innerHTML = " ";
                 }.bind(submit, this)
             },
             changeUser: function (targetUserIndex) {
