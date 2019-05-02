@@ -1,5 +1,4 @@
 <template lang="html">
-
   <section class="app-sidebar">
     <nav class="sidebar sidebar-offcanvas" id="sidebar">
       <ul v-if="role == 'ADMIN'" class="nav">
@@ -26,9 +25,9 @@
            </router-link>
         </li>
             <li class="nav-item">
-          <router-link class="nav-link" to="/task-managment">
+          <router-link class="nav-link" to="/task-management">
             <i class="menu-icon mdi mdi-notification-clear-all"></i>
-            <span class="menu-title">Task-managment</span>
+            <span class="menu-title">Task management</span>
             <i class="menu-arrow"></i>
           </router-link>
         </li>

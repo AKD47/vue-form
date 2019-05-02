@@ -53,8 +53,30 @@
       }
     }
 
+    .el-button {
+      display: none;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+
+      @include breakpoint(max-width 991px) {
+        display: block;
+      }
+    }
+
+    .brand-logo {
+
+      @include breakpoint(max-width 991px) {
+        display: none;
+      }
+    }
+
     .brand-logo-mini {
       display: none;
+
+      @include breakpoint(max-width 991px) {
+        display: block;
+      }
 
       img {
         width: calc(#{$sidebar-width-icon} - 50px);
@@ -74,6 +96,16 @@
         @include display-flex;
         @include align-items(center);
         margin: 0 0.5rem;
+
+        &.preview-list {
+          @include breakpoint(max-width 991px) {
+            margin-right: 100px;
+          }
+
+          @include breakpoint(max-width 660px) {
+            margin-right: inherit;
+          }
+        }
 
         .nav-link {
           color: $white;
@@ -196,6 +228,7 @@
   }
 
   &.fixed-top {
+    z-index: 2222;
     + .page-body-wrapper {
       padding-top: $navbar-height;
     }

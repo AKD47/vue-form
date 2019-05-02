@@ -39,7 +39,7 @@ const router = new Router({
 		}
 	},
 	{
-	  	path: '/task-managment',
+	  	path: '/task-management',
 		component: Task,
           meta: {
               requiresAuth: true,

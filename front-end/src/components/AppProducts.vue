@@ -113,7 +113,6 @@
                             case (200):
                                 v.loading = false;
                                 v.tableData = datarequest.response.data;
-
                                 // v.total = datarequest.response.pageCount * 10;
                                 break;
                             default:

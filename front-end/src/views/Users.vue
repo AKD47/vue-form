@@ -39,28 +39,31 @@
                                                 prop="status"
                                                 label="Status"
                                                 sortable>
+                                            <template slot-scope="props">
+                                                <el-switch v-if="props.row.username !== 'superadmin' && props.row.username !== user" v-model="tableData[props.row.index].status"
+                                                active-value="ENABLED"
+                                                inactive-value="DISABLED"
+                                                @change="changeStatus($event, props.row.username)"
+												active-color="#13ce66"
+												inactive-color="#ff4949">
+                                                </el-switch>
+                                            </template>
                                         </el-table-column>
                                         <el-table-column
                                                 prop="actions"
                                                 label="Actions"
-                                                width="320">
-                                            <template slot-scope="props" v-if="props.row.username !== 'superadmin'">
-                                                <button class="btn btn-success" @click="showEditModal(props.row.username)">
-                                                    Edit
-                                                </button>
-                                                <button  type='button' value="DISABLE"
-                                                         class='btn btn-primary mr-2 ml-2 change-btn statusBtn' id="statusBtn"
-                                                         @click="changeStatus(props.row.username, $event)"
-                                                         v-if="props.row.status == 'ENABLED' && props.row.username !== 'superadmin'">Disable
-                                                </button>
-                                                <button type='button' value="ENABLE"
-                                                        class='btn btn-primary mr-2 ml-2 change-btn statusBtn' id="statusBtn"
-                                                        @click="changeStatus(props.row.username, $event)"
-                                                        v-if="props.row.status == 'DISABLED' && props.row.username !== 'superadmin'">Enable
-                                                </button>
-                                                <button v-if="props.row.username !== user" type='button' class='btn btn-danger'
-                                                        @click="deleteUser(props.row.username)">Delete
-                                                </button>
+                                                width="380">
+                                            <template slot-scope="props" v-if="props.row.username !== 'superadmin' && props.row.username !== user">
+                                                <el-button type="primary" @click="showEditModal(props.row.username)">
+													Edit
+                                                </el-button>
+                                                <el-button type='primary' value="REVOKE TOKEN"
+                                                        @click="revokeToken(props.row.username)"
+                                                        v-if="props.row.username !== 'superadmin' && props.row.username !== user">Revoke Key
+                                                </el-button>
+                                                <el-button v-if="props.row.username !== user" type='danger'
+                                                        @click="deleteUser(props.row.username)" class="btnDanger">Delete
+                                                </el-button>
                                             </template>
                                         </el-table-column>
                                     </el-table>
@@ -74,18 +77,19 @@
                 <div class="product-modal__content">
                     <span class="close product-modal__close" id="closeUser">x</span>
                     <div class="modal-body product-modal__body">
-                        <form action="#" @submit.prevent="addUser" id="userForm">
+                        <form action="#" @submit.prevent="addUser" autocomplete="off" id="userForm">
                                 <div class="form-group">
+                                    <div id="AlertMessage" class="alert-danger text-center"></div>
                                     <label>Username</label>
-                                    <input type="text" id="createUsername" v-model="username" required class="form-control">
+                                    <input type="text" autocomplete="off" id="createUsername" v-model="username" required class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>Password</label>
-                                    <input type="password" id="createPassword" v-model="password" required class="form-control">
+                                    <input type="password" autocomplete="off" id="createPassword" v-model="password" required class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>Role</label>
-                                    <select class="form-control" id="createRole" v-model="role">
+                                    <select class="form-control" id="createRole" required v-model="role">
                                         <option value="ADMIN">Admin</option>
                                         <option value="USER">User</option>
                                     </select>
@@ -102,19 +106,6 @@
                     <span class="close product-modal__close" id="closeEditModal">x</span>
                     <div class="modal-body product-modal__body">
                         <div id="result" class="form-group"></div>
-                        <!--<div class="form-group">-->
-                            <!--<div class="form-group">-->
-                                <!--<label>Username</label>-->
-                                <!--<input type="text" id="editUsername" required class="form-control">-->
-                            <!--</div>-->
-                            <!--<div class="form-group">-->
-                                <!--<label>Role</label>-->
-                                <!--<select id="editUserRole" class="form-control" >-->
-                                    <!--<option value="ADMIN">Admin</option>-->
-                                    <!--<option value="USER">User</option>-->
-                                <!--</select>-->
-                            <!--</div>-->
-                        <!--</div>-->
                         <div class="modal-footer product-modal__footer">
                             <button type="submit" class="btn btn-primary" id="submitUserUpdate">Confirm</button>
                         </div>
@@ -144,7 +135,6 @@
               ],
               tableData: [],
               loading: true
-              // isDisabled: false
           }
         },
         components: {
@@ -155,10 +145,8 @@
         mounted() {
             if (localStorage.username) {
                 this.user = localStorage.username;
-                console.log(this.user);
             }
             this.loadUsers();
-            // this.flipButton();
         },
         methods: {
             loadUsers(){
@@ -183,6 +171,10 @@
                             case (200):
                                 v.loading = false;
                                 v.tableData = datarequest.response;
+                                v.tableData.forEach((item, index) => {
+                                    v.tableData[index].index = index;
+                                });
+                                // console.log(v.tableData);
                                 break;
                             default:
                                 localStorage.removeItem('token');
@@ -203,11 +195,12 @@
             openUserModal: function () {
               let modal = document.getElementById('userModal');
               let close = document.getElementById('closeUser');
+              let alert = document.getElementById('AlertMessage');
               let submitAddUser = document.getElementById('submitAddUser');
               submitAddUser.disabled = false;
+              alert.innerText = " ";
 
               document.querySelectorAll('#createUsername, #createPassword, #createRole').forEach(el=>el.value = '');
-
               modal.classList.remove('modal__close');
               modal.setAttribute('style', 'z-index:9999; opacity: 1;');
               close.onclick = function () {
@@ -226,32 +219,34 @@
                     role: this.role,
                     status: 'ENABLED'
                 };
+                let alert = document.getElementById('AlertMessage');
                 let submitAddUser = document.getElementById('submitAddUser');
                 submitAddUser.disabled = true;
-                // console.log(submitAddUser);
+
+                if ( this.tableData.find(curUser => curUser.username === newUser.username) ) {
+                    alert.innerText = 'This user already exists';
+                    submitAddUser.disabled = false;
+                } else {
+                    alert.innerText = ' ';
+                }
                 let myRequest = new XMLHttpRequest();
                 myRequest.onreadystatechange = function(v) {
                     try {
                         if (myRequest.readyState == 4) {
                             switch (myRequest.status) {
                                 case(403):
-                                    localStorage.removeItem('token');
-                                    localStorage.removeItem('username');
-                                    localStorage.removeItem('apiKey');
-                                    localStorage.removeItem('role');
-                                    v.$router.push({ path: '/login' });
+                                    submitAddUser.disabled = false;
                                     break;
                                 case (400):
-                                    localStorage.removeItem('token');
-                                    localStorage.removeItem('username');
-                                    localStorage.removeItem('apiKey');
-                                    localStorage.removeItem('role');
-                                    v.$router.push({ path: '/login' });
+                                    submitAddUser.disabled = false;
                                     break;
                                 case (200):
+                                    alert.innerText = ' ';
+                                    submitAddUser.disabled = true;
                                     v.$nextTick(() => {
                                         v.$refs.modalUser.classList.add('modal__close');
                                         v.tableData.push(newUser);
+                                        v.loadUsers(newUser);
                                         v.$router.push({path: '/users'});
                                     });
                                     break;
@@ -299,7 +294,8 @@
                                 let reloadRequest = new XMLHttpRequest();
                                 reloadRequest.onreadystatechange = function () {
                                     if (reloadRequest.readyState == 4) {
-                                        v.tableData = reloadRequest.response;
+                                        v.tableData[deleteUser] = reloadRequest.response;
+                                        v.loadUsers(deleteUser);
                                     }
                                 };
                                 reloadRequest.responseType = 'json';
@@ -322,19 +318,20 @@
                 deleteRequest.setRequestHeader('Content-Type', 'application/json');
                 deleteRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
                 deleteRequest.send(JSON.stringify({username: deleteUser.username}));
+                this.loading = true;
             },
-            changeStatus: function (targetUsername, ev) {
+            changeStatus: function (newStatus, targetUsername) {
                 let changedUser = this.tableData.find((item) => item.username === targetUsername);
                 let changedUserIndex = this.tableData.findIndex((item) => item.username === targetUsername);
-                let val = ev.srcElement.getAttribute("value");
+                let val = newStatus;
                 let info = {};
                 info["action"] = 'updateUser';
                 info['targetUsername'] = changedUser.username;
-                if ("ENABLE" === val) {
-                    ev.srcElement.setAttribute("value", "DISABLE");
+                if ("ENABLED" === val) {
                     info['newStatus'] = 'ENABLED';
                     let statusRequest = new XMLHttpRequest();
                     statusRequest.onreadystatechange = function (v) {
+						console.log('D');
                         if (statusRequest.readyState == 4) {
                             switch (statusRequest.status) {
                                 case (403):
@@ -353,6 +350,7 @@
                                     break;
                                 case (200):
                                     v.tableData[changedUserIndex].status = 'ENABLED';
+                                    console.log(v.tableData);
                                     break;
                                 default:
                                     localStorage.removeItem('token');
@@ -369,8 +367,7 @@
                     statusRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
                     statusRequest.send(JSON.stringify(info))
                 }
-                if ("DISABLE" === val) {
-                    ev.srcElement.setAttribute("value", "ENABLE");
+                if ("DISABLED" === val) {
                     info['newStatus'] = 'DISABLED';
                     let statusRequest = new XMLHttpRequest();
                     statusRequest.onreadystatechange = function (v) {
@@ -392,6 +389,7 @@
                                     break;
                                 case (200):
                                     v.tableData[changedUserIndex].status = 'DISABLED';
+                                    console.log(v.tableData);
                                     break;
                                 default:
                                     localStorage.removeItem('token');
@@ -409,29 +407,37 @@
                     statusRequest.send(JSON.stringify(info))
                 }
             },
-            // flipButton(changedUserIndex) {
-            //         let flipBtn = document.getElementById('statusBtn');
-            //         if (this.tableData[changedUserIndex].status === 'ENABLED') {
-            //             flipBtn.text = 'DISABLE';
-            //         }
-            //         if (this.tableData[changedUserIndex].status === 'DISABLED') {
-            //             flipBtn.text = 'ENABLE';
-            //         }
-            // },
+            revokeToken: function(targetUsername) {
+                let revokeTokenRequest = new XMLHttpRequest();
+                let payload = {};
+                payload['action'] = 'revokeToken';
+                payload['targetUsername'] = targetUsername;
+                revokeTokenRequest.onreadystatechange = function (v) {
+                    if (revokeTokenRequest.readyState === 4) {
+                        switch (revokeTokenRequest.status) {
+                            case (200):
+                                v.$notify({
+                                   title: "Token has been revoked",
+                                    type: "success",
+                                    offset: 50
+                                });
+                        }
+                    }
+                }.bind(revokeTokenRequest,this);
+                revokeTokenRequest.responseType = 'json';
+                revokeTokenRequest.open('PATCH', `${Host}/user`);
+                revokeTokenRequest.setRequestHeader("Authorization", `Bearer ${localStorage.getItem('token')}`);
+                revokeTokenRequest.setRequestHeader("Content-Type", "application/json");
+                revokeTokenRequest.send(JSON.stringify(payload));
+            },
             showEditModal: function (edit) {
                 let editUser = this.tableData.find((item) => item.username === edit);
                 let targetUserIndex = this.tableData.findIndex((item) => item.username === edit);
                 let modal = document.getElementById('productModal');
                 let close = document.getElementById("closeEditModal");
-                // let inputUsername = document.getElementById('editUsername');
-                // let userRole = document.getElementById('editUserRole');
                 let submit = document.getElementById('submitUserUpdate');
                 let result = document.getElementById('result');
-
                 submit.disabled = false;
-                // inputUsername.setAttribute('value', editUser.username);
-                // userRole.setAttribute('value', editUser.role);
-                // console.log(editUser.role);
 
                 if ( editUser.role != 'ADMIN' ) {
                     result.innerHTML = `<div class="form-group">
@@ -443,7 +449,14 @@
                                             <option value="ADMIN">Admin</option>
                                             <option selected value="USER">User</option>
                                         </select>
-                                    </div>`;
+                                    </div>
+                                    <div class="form-group">
+                                          <div class="form-group">
+                                              <label>New Password</label>
+                                              <input type="password" minlength="7" maxlength="9" id="editUserNewPass" required class="form-control">
+                                              <a href="#" id="showUserNewPass" class="mdi mdi-eye pass--btn"></a>
+                                          </div>
+                                      </div>`;
                 } else {
                     result.innerHTML = `<div class="form-group">
                                         <label>Username</label>
@@ -454,7 +467,14 @@
                                             <option selected value="ADMIN">Admin</option>
                                             <option value="USER">User</option>
                                         </select>
-                                    </div>`;
+                                    </div>
+                                    <div class="form-group">
+                                          <div class="form-group">
+                                              <label>New Password</label>
+                                              <input type="password" value="" minlength="7" maxlength="9" id="editUserNewPass" class="form-control">
+                                              <a href="#" id="showUserNewPass" class="mdi mdi-eye pass--btn"></a>
+                                          </div>
+                                      </div>`;
                 }
 
                 modal.classList.remove('modal__close');
@@ -469,6 +489,16 @@
                         result.innerHTML = " ";
                     }
                 };
+                let trigger = document.getElementById('showUserNewPass');
+                let newPass = document.getElementById('editUserNewPass');
+                trigger.onclick = function (event) {
+                    event.preventDefault();
+                    if (newPass.type === "password") {
+                        newPass.type = "text";
+                    } else {
+                        newPass.type = "password";
+                    }
+                };
                 submit.onclick = function(v, event) {
                     modal.setAttribute("style", "z-index:-1; opacity: 0;");
                     v.changeUser(targetUserIndex);
@@ -478,13 +508,17 @@
             changeUser: function (targetUserIndex) {
                 let paramsUser = {
                     username: document.getElementById('editUsername').value,
-                    role:  document.getElementById('editUserRole').value
+                    role:  document.getElementById('editUserRole').value,
+                    newPass: document.getElementById('editUserNewPass').value
                 };
                 let editInfo = {};
                 editInfo["action"] = 'updateUser';
                 editInfo['targetUsername'] = this.tableData[targetUserIndex].username;
                 editInfo['newUsername'] = paramsUser.username;
                 editInfo['newRole'] = paramsUser.role;
+                if ( paramsUser.newPass.length > 0 ) {
+                    editInfo['newPassword'] = paramsUser.newPass;
+                }
                 let submit = document.getElementById('submitUserUpdate');
                 submit.disabled = true;
                 let editRequest = new XMLHttpRequest();
@@ -532,7 +566,7 @@
                 editRequest.setRequestHeader('Content-Type', 'application/json');
                 editRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
                 editRequest.send(JSON.stringify(editInfo));
-            }
+            },
         }
     }
 </script>
@@ -541,7 +575,7 @@
     .modal__close{
         display: none;
     }
-    /*#submitUserUpdate:disabled {*/
-        /*opacity: 0.7;*/
-    /*}*/
+	.btnDanger {
+		background-color: #ff4949;
+	}
 </style>

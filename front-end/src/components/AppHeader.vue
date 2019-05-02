@@ -2,12 +2,9 @@
   <b-navbar class="fixed-top" toggleable="md" type="dark" variant="info">
     <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
     <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
-      <a class="navbar-brand brand-logo" href="/">
-        <!--<img src="../assets/images/top-logo.png" alt="logo"/>-->
-      </a>
-      <a class="navbar-brand brand-logo-mini" href="/">
-        <img src="../assets/images/logo.png" alt="logo"/>
-      </a>
+      <a class="navbar-brand brand-logo" href="/"></a>
+      <a class="navbar-brand brand-logo-mini" href="/"></a>
+      <el-button id="burgerMenu" type="primary" icon="el-icon-menu" @click="showSidebarMenu()" circle></el-button>
     </div>
     <b-collapse is-nav id="nav_collapse">
       <b-navbar-nav class="ml-auto">
@@ -34,6 +31,19 @@ export default {
           localStorage.removeItem('username');
           localStorage.removeItem('apiKey');
           router.push({ path: '/login'})
+      },
+      showSidebarMenu: function () {
+          var button = document.getElementById('burgerMenu');
+          var sidebarMenu = document.getElementById('sidebar');
+
+          if (button.classList.contains('show-menu')) {
+              button.classList.remove('show-menu');
+              sidebarMenu.classList.remove('active');
+          } else {
+              button.classList.add('show-menu');
+              sidebarMenu.classList.add('active');
+          }
+
       }
   }
 }
@@ -43,6 +53,9 @@ export default {
 .app-header {
 }
 .brand-logo {
+  background-image: url(../assets/images/top-logo.png);
+}
+.brand-logo-mini {
   background-image: url(../assets/images/top-logo.png);
 }
 </style>

@@ -19,6 +19,22 @@
   padding: $btn-padding-y .75rem;
   line-height: 14px;
 
+  &__time {
+    float: left;
+    width: calc(50% - 2px);
+    width: -webkit-calc(50% - 2px);
+    width: -moz-calc(50% - 2px);
+    margin: 0;
+    padding: 0;
+    border: none;
+    text-align: right;
+  }
+
+  &__separator {
+    float: left;
+    width: 2px;
+  }
+
   &.form-control-lg {
     padding: $input-btn-padding-y-lg .75rem;
   }
