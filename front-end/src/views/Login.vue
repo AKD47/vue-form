@@ -1,5 +1,4 @@
 <template lang="html">
-
   <div class="container-scroller page-body-wrapper full-page-wrapper ">
     <div class="content-wrapper d-flex align-items-center auth auth-bg-1 theme-one">
       <div class="row w-100">
@@ -14,7 +13,6 @@
                         <img src="../assets/images/top-logo.png" alt="logo">
                       </div>
                     </div>
-                    <!--<div id="errorMessage" class="error-message"></div>-->
                     <form id="loginForm" autocomplete="off" class="pt-5">
                       <form @submit.prevent="login" autocomplete="off">
                         <div class="form-group">
@@ -30,10 +28,6 @@
                         <div class="mt-5">
                           <button class="btn btn-block btn-primary btn-lg font-weight-medium" type="submit">Login</button>
                         </div>
-                        <!--<div class="mt-3 text-center">-->
-                          <!--<a href="#" class="auth-link text-white">Forgot password?</a>-->
-                        <!--</div>-->
-
                       </form>
                     </form>
                   </div>
@@ -61,6 +55,7 @@
 </template>
 
 <script lang='js'>
+
 export default {
 	name: 'login',
 	data() {
@@ -72,52 +67,28 @@ export default {
 	methods: {
 		login: function(event) {
 			let router = this.$router;
-			let request = new XMLHttpRequest();
-			// let error = this.showErrorMessage(event);
-			request.onreadystatechange = function(v) {
-				if (request.readyState == 4) {
-                    switch (request.status) {
-                        case(403):
-                          // console.log(111)  ;
-                          // alert('Account or Password is incorrect!');
-                          v.showErrorMessage(event);
-                          break;
-                        case(200):
-                          localStorage.setItem('token', request.response.token);
-                          localStorage.setItem('username', request.response.username);
-                          localStorage.setItem('apiKey', request.response.apiKey);
-                          localStorage.setItem('role', request.response.role);
-                          router.push({ path: '/' });
-                          break;
-                        default:
-                          v.showErrorMessage(event);
-                          break;
-                    }
-				}
-			}.bind(request, this);
-			request.open('POST', `${Host}/login`);
-			request.responseType = 'json';
-			request.setRequestHeader('Content-Type', 'application/json');
-			request.send(JSON.stringify({ username: this.username, password: this.password }));
+            this.$http.post('/login', {
+                username: this.username,
+                password: this.password
+            }).then((response) => {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('username', response.data.username);
+                localStorage.setItem('apiKey', response.data.apiKey);
+                localStorage.setItem('role', response.data.role);
+                router.push({ path: '/' });
+            }).catch((error) => {
+                console.log(error);
+                this.showErrorMessage(event);
+            });
 		},
         showErrorMessage: function () {
-            this.$message({
+            this.$notify.error({
                 showClose: true,
-                message: 'Account or Password is incorrect!',
-                type: 'error'
+                title: 'Error',
+                message: 'Account or Password is incorrect!'
             });
-            // let message = document.getElementById('errorMessage');
-            // message.innerText = '';
-            // event.preventDefault();
-            // message.classList.add('show-massage');
-            // message.innerText = 'Account or Password is incorrect!';
-            //
-            // setTimeout(function () {
-            //     message.classList.remove('show-massage');
-            //     message.innerText = ' ';
-            // }, 5000)
         },
-        showPass: function () {
+        showPass: function (event) {
             event.preventDefault();
             let pass = document.getElementById('password');
             if (pass.type === "password") {
