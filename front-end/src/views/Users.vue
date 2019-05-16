@@ -151,9 +151,7 @@
         methods: {
             loadUsers(){
                 let router = this.$router;
-                this.$http.get('/user', {
-                    user: this.user,
-                }).then((response) => {
+                this.$http.get('/user').then((response) => {
                     this.loading = false;
                     this.tableData = response.data;
                     this.tableData.forEach((item, index) => {
@@ -247,45 +245,60 @@
                 } else {
                     alert.innerText = ' ';
                 }
-                let myRequest = new XMLHttpRequest();
-                myRequest.onreadystatechange = function(v) {
-                    try {
-                        if (myRequest.readyState == 4) {
-                            switch (myRequest.status) {
-                                case(403):
-                                    submitAddUser.disabled = false;
-                                    break;
-                                case (400):
-                                    submitAddUser.disabled = false;
-                                    break;
-                                case (200):
-                                    alert.innerText = ' ';
-                                    submitAddUser.disabled = true;
-                                    v.$nextTick(() => {
-                                        v.$refs.modalUser.classList.add('modal__close');
-                                        v.tableData.push(newUser);
-                                        v.loadUsers(newUser);
-                                        v.$router.push({path: '/users'});
-                                    });
-                                    break;
-                                default:
-                                    localStorage.removeItem('token');
-                                    localStorage.removeItem('username');
-                                    localStorage.removeItem('apiKey');
-                                    localStorage.removeItem('role');
-                                    v.$router.push({ path: '/login' });
-                            }
-                        }
-                    }
-                    catch (err) {
-                        console.log(err);
-                    }
-                }.bind(myRequest, this);
-                myRequest.responseType = 'json';
-                myRequest.open('PUT', `${Host}/user`);
-                myRequest.setRequestHeader('Content-Type', 'application/json');
-                myRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-                myRequest.send(JSON.stringify(newUser));
+                this.$http.put('/user', newUser).then((response) => {
+                    console.log(response);
+                    alert.innerText = ' ';
+                    submitAddUser.disabled = true;
+                    // this.tableData = response.data;
+                    this.$nextTick(() => {
+                        this.$refs.modalUser.classList.add('modal__close');
+                        this.tableData.push(newUser);
+                        this.loadUsers();
+                        // this.$router.push({path: '/users'});
+                    });
+                }).catch((error) => {
+                    console.log(error)
+                });
+
+                // let myRequest = new XMLHttpRequest();
+                // myRequest.onreadystatechange = function(v) {
+                //     try {
+                //         if (myRequest.readyState == 4) {
+                //             switch (myRequest.status) {
+                //                 case(403):
+                //                     submitAddUser.disabled = false;
+                //                     break;
+                //                 case (400):
+                //                     submitAddUser.disabled = false;
+                //                     break;
+                //                 case (200):
+                //                     alert.innerText = ' ';
+                //                     submitAddUser.disabled = true;
+                //                     v.$nextTick(() => {
+                //                         v.$refs.modalUser.classList.add('modal__close');
+                //                         v.tableData.push(newUser);
+                //                         v.loadUsers(newUser);
+                //                         v.$router.push({path: '/users'});
+                //                     });
+                //                     break;
+                //                 default:
+                //                     localStorage.removeItem('token');
+                //                     localStorage.removeItem('username');
+                //                     localStorage.removeItem('apiKey');
+                //                     localStorage.removeItem('role');
+                //                     v.$router.push({ path: '/login' });
+                //             }
+                //         }
+                //     }
+                //     catch (err) {
+                //         console.log(err);
+                //     }
+                // }.bind(myRequest, this);
+                // myRequest.responseType = 'json';
+                // myRequest.open('PUT', `${Host}/user`);
+                // myRequest.setRequestHeader('Content-Type', 'application/json');
+                // myRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+                // myRequest.send(JSON.stringify(newUser));
             },
             deleteUser: function (user) {
                 let deleteUser = this.tableData.find((item) => item.username === user);
