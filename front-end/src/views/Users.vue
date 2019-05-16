@@ -246,7 +246,7 @@
                     alert.innerText = ' ';
                 }
                 this.$http.put('/user', newUser).then((response) => {
-                    console.log(response);
+                    // console.log(response);
                     alert.innerText = ' ';
                     submitAddUser.disabled = true;
                     // this.tableData = response.data;
@@ -303,6 +303,16 @@
             deleteUser: function (user) {
                 let deleteUser = this.tableData.find((item) => item.username === user);
                 let deleteUserIndex = this.tableData.findIndex((item) => item.username === user);
+
+                // this.$http.delete('/user',{
+                //     data: user
+                // }).then((response) => {
+                //     this.tableData[user] = response.data;
+                //     this.loadUsers();
+                // }).catch((error) => {
+                //     console.log(error);
+                // });
+
                 let deleteRequest = new XMLHttpRequest();
                 deleteRequest.onreadystatechange = function (v) {
                     if (deleteRequest.readyState == 4) {
@@ -322,18 +332,8 @@
                                 v.$router.push({ path: '/login' });
                                 break;
                             case (200):
-                                let reloadRequest = new XMLHttpRequest();
-                                reloadRequest.onreadystatechange = function () {
-                                    if (reloadRequest.readyState == 4) {
-                                        v.tableData[deleteUser] = reloadRequest.response;
-                                        v.loadUsers(deleteUser);
-                                    }
-                                };
-                                reloadRequest.responseType = 'json';
-                                reloadRequest.open('GET', `${Host}/user`);
-                                reloadRequest.setRequestHeader('Content-Type', 'application/json');
-                                reloadRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-                                reloadRequest.send();
+                                v.tableData[deleteUser] = deleteRequest.response;
+                                v.loadUsers(deleteUser);
                                 break;
                             default:
                                 localStorage.removeItem('token');
@@ -360,82 +360,96 @@
                 info['targetUsername'] = changedUser.username;
                 if ("ENABLED" === val) {
                     info['newStatus'] = 'ENABLED';
-                    let statusRequest = new XMLHttpRequest();
-                    statusRequest.onreadystatechange = function (v) {
-						// console.log('D');
-                        if (statusRequest.readyState == 4) {
-                            switch (statusRequest.status) {
-                                case (403):
-                                    localStorage.removeItem('token');
-                                    localStorage.removeItem('username');
-                                    localStorage.removeItem('apiKey');
-                                    localStorage.removeItem('role');
-                                    v.$router.push({ path: '/login' });
-                                    break;
-                                case (400):
-                                    localStorage.removeItem('token');
-                                    localStorage.removeItem('username');
-                                    localStorage.removeItem('apiKey');
-                                    localStorage.removeItem('role');
-                                    v.$router.push({ path: '/login' });
-                                    break;
-                                case (200):
-                                    v.tableData[changedUserIndex].status = 'ENABLED';
-                                    console.log(v.tableData);
-                                    break;
-                                default:
-                                    localStorage.removeItem('token');
-                                    localStorage.removeItem('username');
-                                    localStorage.removeItem('apiKey');
-                                    localStorage.removeItem('role');
-                                    v.$router.push({ path: '/login' });
-                            }
-                        }
-                    }.bind(statusRequest, this);
-                    statusRequest.open('PATCH', `${Host}/user`);
-                    statusRequest.responseType = 'json';
-                    statusRequest.setRequestHeader('Content-Type', 'application/json');
-                    statusRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-                    statusRequest.send(JSON.stringify(info))
+                    this.$http.patch('/user', info).then((response) => {
+                        this.tableData[changedUserIndex].status = 'ENABLED';
+                        // console.log(this.tableData);
+                    }).catch((error) => {
+                        console.log(error)
+                    });
+
+                    // let statusRequest = new XMLHttpRequest();
+                    // statusRequest.onreadystatechange = function (v) {
+						// // console.log('D');
+                    //     if (statusRequest.readyState == 4) {
+                    //         switch (statusRequest.status) {
+                    //             case (403):
+                    //                 localStorage.removeItem('token');
+                    //                 localStorage.removeItem('username');
+                    //                 localStorage.removeItem('apiKey');
+                    //                 localStorage.removeItem('role');
+                    //                 v.$router.push({ path: '/login' });
+                    //                 break;
+                    //             case (400):
+                    //                 localStorage.removeItem('token');
+                    //                 localStorage.removeItem('username');
+                    //                 localStorage.removeItem('apiKey');
+                    //                 localStorage.removeItem('role');
+                    //                 v.$router.push({ path: '/login' });
+                    //                 break;
+                    //             case (200):
+                    //                 v.tableData[changedUserIndex].status = 'ENABLED';
+                    //                 console.log(v.tableData);
+                    //                 break;
+                    //             default:
+                    //                 localStorage.removeItem('token');
+                    //                 localStorage.removeItem('username');
+                    //                 localStorage.removeItem('apiKey');
+                    //                 localStorage.removeItem('role');
+                    //                 v.$router.push({ path: '/login' });
+                    //         }
+                    //     }
+                    // }.bind(statusRequest, this);
+                    // statusRequest.open('PATCH', `${Host}/user`);
+                    // statusRequest.responseType = 'json';
+                    // statusRequest.setRequestHeader('Content-Type', 'application/json');
+                    // statusRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+                    // statusRequest.send(JSON.stringify(info))
                 }
                 if ("DISABLED" === val) {
                     info['newStatus'] = 'DISABLED';
-                    let statusRequest = new XMLHttpRequest();
-                    statusRequest.onreadystatechange = function (v) {
-                        if (statusRequest.readyState == 4) {
-                            switch (statusRequest.status) {
-                                case (403):
-                                    localStorage.removeItem('token');
-                                    localStorage.removeItem('username');
-                                    localStorage.removeItem('apiKey');
-                                    localStorage.removeItem('role');
-                                    v.$router.push({ path: '/login' });
-                                    break;
-                                case (400):
-                                    localStorage.removeItem('token');
-                                    localStorage.removeItem('username');
-                                    localStorage.removeItem('apiKey');
-                                    localStorage.removeItem('role');
-                                    v.$router.push({ path: '/login' });
-                                    break;
-                                case (200):
-                                    v.tableData[changedUserIndex].status = 'DISABLED';
-                                    console.log(v.tableData);
-                                    break;
-                                default:
-                                    localStorage.removeItem('token');
-                                    localStorage.removeItem('username');
-                                    localStorage.removeItem('apiKey');
-                                    localStorage.removeItem('role');
-                                    v.$router.push({ path: '/login' });
-                            }
-                        }
-                    }.bind(statusRequest, this);
-                    statusRequest.open('PATCH', `${Host}/user`);
-                    statusRequest.responseType = 'json';
-                    statusRequest.setRequestHeader('Content-Type', 'application/json');
-                    statusRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-                    statusRequest.send(JSON.stringify(info))
+                    this.$http.patch('/user', info).then((response) => {
+                        this.tableData[changedUserIndex].status = 'DISABLED';
+                        // console.log(this.tableData);
+                    }).catch((error) => {
+                        console.log(error)
+                    });
+
+                    // let statusRequest = new XMLHttpRequest();
+                    // statusRequest.onreadystatechange = function (v) {
+                    //     if (statusRequest.readyState == 4) {
+                    //         switch (statusRequest.status) {
+                    //             case (403):
+                    //                 localStorage.removeItem('token');
+                    //                 localStorage.removeItem('username');
+                    //                 localStorage.removeItem('apiKey');
+                    //                 localStorage.removeItem('role');
+                    //                 v.$router.push({ path: '/login' });
+                    //                 break;
+                    //             case (400):
+                    //                 localStorage.removeItem('token');
+                    //                 localStorage.removeItem('username');
+                    //                 localStorage.removeItem('apiKey');
+                    //                 localStorage.removeItem('role');
+                    //                 v.$router.push({ path: '/login' });
+                    //                 break;
+                    //             case (200):
+                    //                 v.tableData[changedUserIndex].status = 'DISABLED';
+                    //                 console.log(v.tableData);
+                    //                 break;
+                    //             default:
+                    //                 localStorage.removeItem('token');
+                    //                 localStorage.removeItem('username');
+                    //                 localStorage.removeItem('apiKey');
+                    //                 localStorage.removeItem('role');
+                    //                 v.$router.push({ path: '/login' });
+                    //         }
+                    //     }
+                    // }.bind(statusRequest, this);
+                    // statusRequest.open('PATCH', `${Host}/user`);
+                    // statusRequest.responseType = 'json';
+                    // statusRequest.setRequestHeader('Content-Type', 'application/json');
+                    // statusRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+                    // statusRequest.send(JSON.stringify(info))
                 }
             },
             revokeToken: function(targetUsername) {

@@ -20,6 +20,11 @@ axios.interceptors.request.use(function (config) {
    }
    return config;
 });
+// response parse
+// axios.interceptors.response.use((response) => {
+//     console.log(response);
+//     // return parseBody(response)
+// });
 Vue.prototype.$http = axios;
 // console.log(token);
 
