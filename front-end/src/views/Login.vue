@@ -134,26 +134,4 @@ export default {
     }
   }
 }
-  /*.error-message {*/
-    /*position: absolute;*/
-    /*top: 0;*/
-    /*right: 0;*/
-    /*left: 0;*/
-    /*width: 80%;*/
-    /*margin: auto;*/
-    /*opacity: 0;*/
-    /*background-color: #fef0f0;*/
-    /*color: #f56c6c;*/
-    /*text-align: center;*/
-    /*padding: 5px;*/
-    /*border-radius: 50px;*/
-    /*box-sizing: border-box;*/
-    /*border: 1px solid #f56c6c;*/
-    /*transition: opacity 0.4s;*/
-
-    /*&.show-massage {*/
-      /*opacity: 1;*/
-      /*transition: opacity 0.4s;*/
-    /*}*/
-  /*}*/
 </style>

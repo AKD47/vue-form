@@ -150,46 +150,64 @@
         },
         methods: {
             loadUsers(){
-                let datarequest = new XMLHttpRequest();
-                datarequest.onreadystatechange = function(v, changedUserIndex) {
-                    if (datarequest.readyState == 4) {
-                        switch (datarequest.status) {
-                            case(403):
-                                localStorage.removeItem('token');
-                                localStorage.removeItem('username');
-                                localStorage.removeItem('apiKey');
-                                localStorage.removeItem('role');
-                                v.$router.push({ path: '/login' });
-                                break;
-                            case (400):
-                                localStorage.removeItem('token');
-                                localStorage.removeItem('username');
-                                localStorage.removeItem('apiKey');
-                                localStorage.removeItem('role');
-                                v.$router.push({ path: '/login' });
-                                break;
-                            case (200):
-                                v.loading = false;
-                                v.tableData = datarequest.response;
-                                v.tableData.forEach((item, index) => {
-                                    v.tableData[index].index = index;
-                                });
-                                // console.log(v.tableData);
-                                break;
-                            default:
-                                localStorage.removeItem('token');
-                                localStorage.removeItem('username');
-                                localStorage.removeItem('apiKey');
-                                localStorage.removeItem('role');
-                                v.$router.push({ path: '/login' });
-                        }
-                    }
-                }.bind(datarequest, this);
-                datarequest.open('GET', `${Host}/user`);
-                datarequest.responseType = 'json';
-                datarequest.setRequestHeader('Content-Type', 'application/json');
-                datarequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-                datarequest.send();
+                let router = this.$router;
+                this.$http.get('/user', {
+                    user: this.user,
+                }).then((response) => {
+                    this.loading = false;
+                    this.tableData = response.data;
+                    this.tableData.forEach((item, index) => {
+                        this.tableData[index].index = index;
+                    });
+                }).catch((error) => {
+                    console.log(error);
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('apiKey');
+                    localStorage.removeItem('role');
+                    router.push({ path: '/login' });
+                });
+
+                // let datarequest = new XMLHttpRequest();
+                // datarequest.onreadystatechange = function(v, changedUserIndex) {
+                //     if (datarequest.readyState == 4) {
+                //         switch (datarequest.status) {
+                //             case(403):
+                //                 localStorage.removeItem('token');
+                //                 localStorage.removeItem('username');
+                //                 localStorage.removeItem('apiKey');
+                //                 localStorage.removeItem('role');
+                //                 v.$router.push({ path: '/login' });
+                //                 break;
+                //             case (400):
+                //                 localStorage.removeItem('token');
+                //                 localStorage.removeItem('username');
+                //                 localStorage.removeItem('apiKey');
+                //                 localStorage.removeItem('role');
+                //                 v.$router.push({ path: '/login' });
+                //                 break;
+                //             case (200):
+                //                 v.loading = false;
+                //                 v.tableData = datarequest.response;
+                //                 v.tableData.forEach((item, index) => {
+                //                     v.tableData[index].index = index;
+                //                 });
+                //                 // console.log(v.tableData);
+                //                 break;
+                //             default:
+                //                 localStorage.removeItem('token');
+                //                 localStorage.removeItem('username');
+                //                 localStorage.removeItem('apiKey');
+                //                 localStorage.removeItem('role');
+                //                 v.$router.push({ path: '/login' });
+                //         }
+                //     }
+                // }.bind(datarequest, this);
+                // datarequest.open('GET', `${Host}/user`);
+                // datarequest.responseType = 'json';
+                // datarequest.setRequestHeader('Content-Type', 'application/json');
+                // datarequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+                // datarequest.send();
                 this.loading = true;
             },
             openUserModal: function () {
@@ -331,7 +349,7 @@
                     info['newStatus'] = 'ENABLED';
                     let statusRequest = new XMLHttpRequest();
                     statusRequest.onreadystatechange = function (v) {
-						console.log('D');
+						// console.log('D');
                         if (statusRequest.readyState == 4) {
                             switch (statusRequest.status) {
                                 case (403):

@@ -14,11 +14,14 @@ axios.defaults.baseURL = 'https://backendzenabi.dimatech.org';
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.interceptors.request.use(function (config) {
    if (localStorage.getItem('token')) {
-       config.headers.common['Authorization'] = `Bearer ${localStorage.getItem(token)}`;
+       const token = localStorage.getItem('token');
+       config.headers.common['Authorization'] = `Bearer ${token}`;
+       // config.headers.authorization = localStorage.getItem("token");
    }
    return config;
 });
 Vue.prototype.$http = axios;
+// console.log(token);
 
 Vue.use(BootstrapVue)
 Vue.use(ElementsUI, Loading)
