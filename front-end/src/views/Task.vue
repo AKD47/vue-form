@@ -131,74 +131,137 @@
 		},
 		methods: {
 			loadTaskData: function () {
-				let datarequest = new XMLHttpRequest();
-				datarequest.onreadystatechange = function(v) {
-					if (datarequest.readyState == 4) {
-						v.loading = false;
-						v.dt = datarequest.response.data;
-						v.dt.forEach((item) => {
-							item.schedule;
-							let scheduleArray = item.schedule.split(" ");
-							let scheduleDay = scheduleArray[3] + " " + scheduleArray[4] + " " + scheduleArray[5];
-							let scheduleTime = scheduleArray[0] + " " + scheduleArray[1] + " " + scheduleArray[2];
-							let scheduleTotal = scheduleTime + ' ' + scheduleDay;
+			    this.$http.get('/tasks').then((response) => {
+                    this.loading = false;
+                    this.dt = response.data.data;
+                    this.dt.forEach((item) => {
+                        item.schedule;
+                        let scheduleArray = item.schedule.split(" ");
+                        let scheduleDay = scheduleArray[3] + " " + scheduleArray[4] + " " + scheduleArray[5];
+                        let scheduleTime = scheduleArray[0] + " " + scheduleArray[1] + " " + scheduleArray[2];
+                        let scheduleTotal = scheduleTime + ' ' + scheduleDay;
 
-							console.log(datarequest.response.timezoneOffset);
-							let offset = (new Date().getTimezoneOffset() / 60 * -1) - datarequest.response.timezoneOffset / 60;
-							let curHours = parseInt(scheduleArray[2]);
-							let hoursWithOffset;
-							if (curHours + offset > 23) {
-								hoursWithOffset = (curHours + offset) - 24;
-							} else if (curHours + offset < 0) {
-								hoursWithOffset = 24 + (curHours + offset);
-							} else {
-								hoursWithOffset = (curHours + offset);
-							}
-							let hoursWithOffsetStr = (hoursWithOffset < 10 ? `0${hoursWithOffset}` : hoursWithOffset);
-							let minutesStr = (scheduleArray[1].length === 1 ? `0${scheduleArray[1]}` : scheduleArray[1]);
-							switch (scheduleDay) {
-								case("* * ?"):
-									this.schedule = 'Every 1 Day' + ' at ' + hoursWithOffsetStr + ':' + minutesStr;
-									item.schedule = this.schedule;
-									break;
-								case("? * 2"):
-									this.schedule = 'Every 1 Week' + ' at ' + hoursWithOffsetStr + ':' + minutesStr;
-									item.schedule = this.schedule;
-									break;
-								case("1 * ?"):
-									this.schedule = 'Every 1 Month' + ' at ' + hoursWithOffsetStr + ':' + minutesStr;
-									item.schedule = this.schedule;
-									break;
-							}
-							switch (scheduleTotal) {
-								case("0 0 0/2 * * ?"):
-									this.schedule = 'Every 2 Hours';
-									item.schedule = this.schedule;
-									break;
-							}
-							switch (scheduleTime) {
-								case("0 0 0/4"):
-									this.schedule = 'Every 4 Hours';
-									item.schedule = this.schedule;
-									break;
-								case("0 0 0/8"):
-									this.schedule = 'Every 8 Hours';
-									item.schedule = this.schedule;
-									break;
-								case("0 0 0/12"):
-									this.schedule = 'Every 12 Hours';
-									item.schedule = this.schedule;
-									break;
-							}
-							v.tableData = v.dt;
-						});
-					}
-				}.bind(datarequest, this);
-				datarequest.open('GET', `${Host}/tasks`);
-				datarequest.responseType = 'json';
-				datarequest.setRequestHeader('Content-Type', 'application/json');
-				datarequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-				datarequest.send();
+                        console.log(response.data.timezoneOffset);
+                        let offset = (new Date().getTimezoneOffset() / 60 * -1) - response.data.timezoneOffset / 60;
+                        let curHours = parseInt(scheduleArray[2]);
+                        let hoursWithOffset;
+                        if (curHours + offset > 23) {
+                            hoursWithOffset = (curHours + offset) - 24;
+                        } else if (curHours + offset < 0) {
+                            hoursWithOffset = 24 + (curHours + offset);
+                        } else {
+                            hoursWithOffset = (curHours + offset);
+                        }
+                        let hoursWithOffsetStr = (hoursWithOffset < 10 ? `0${hoursWithOffset}` : hoursWithOffset);
+                        let minutesStr = (scheduleArray[1].length === 1 ? `0${scheduleArray[1]}` : scheduleArray[1]);
+                        switch (scheduleDay) {
+                            case("* * ?"):
+                                this.schedule = 'Every 1 Day' + ' at ' + hoursWithOffsetStr + ':' + minutesStr;
+                                item.schedule = this.schedule;
+                                break;
+                            case("? * 2"):
+                                this.schedule = 'Every 1 Week' + ' at ' + hoursWithOffsetStr + ':' + minutesStr;
+                                item.schedule = this.schedule;
+                                break;
+                            case("1 * ?"):
+                                this.schedule = 'Every 1 Month' + ' at ' + hoursWithOffsetStr + ':' + minutesStr;
+                                item.schedule = this.schedule;
+                                break;
+                        }
+                        switch (scheduleTotal) {
+                            case("0 0 0/2 * * ?"):
+                                this.schedule = 'Every 2 Hours';
+                                item.schedule = this.schedule;
+                                break;
+                        }
+                        switch (scheduleTime) {
+                            case("0 0 0/4"):
+                                this.schedule = 'Every 4 Hours';
+                                item.schedule = this.schedule;
+                                break;
+                            case("0 0 0/8"):
+                                this.schedule = 'Every 8 Hours';
+                                item.schedule = this.schedule;
+                                break;
+                            case("0 0 0/12"):
+                                this.schedule = 'Every 12 Hours';
+                                item.schedule = this.schedule;
+                                break;
+                        }
+                        this.tableData = this.dt;
+                    });
+				}).catch((error) => {
+				   console.log(error);
+				});
+
+				// let datarequest = new XMLHttpRequest();
+				// datarequest.onreadystatechange = function(v) {
+				// 	if (datarequest.readyState == 4) {
+				// 		v.loading = false;
+				// 		v.dt = datarequest.response.data;
+				// 		v.dt.forEach((item) => {
+				// 			item.schedule;
+				// 			let scheduleArray = item.schedule.split(" ");
+				// 			let scheduleDay = scheduleArray[3] + " " + scheduleArray[4] + " " + scheduleArray[5];
+				// 			let scheduleTime = scheduleArray[0] + " " + scheduleArray[1] + " " + scheduleArray[2];
+				// 			let scheduleTotal = scheduleTime + ' ' + scheduleDay;
+                //
+				// 			console.log(datarequest.response.timezoneOffset);
+				// 			let offset = (new Date().getTimezoneOffset() / 60 * -1) - datarequest.response.timezoneOffset / 60;
+				// 			let curHours = parseInt(scheduleArray[2]);
+				// 			let hoursWithOffset;
+				// 			if (curHours + offset > 23) {
+				// 				hoursWithOffset = (curHours + offset) - 24;
+				// 			} else if (curHours + offset < 0) {
+				// 				hoursWithOffset = 24 + (curHours + offset);
+				// 			} else {
+				// 				hoursWithOffset = (curHours + offset);
+				// 			}
+				// 			let hoursWithOffsetStr = (hoursWithOffset < 10 ? `0${hoursWithOffset}` : hoursWithOffset);
+				// 			let minutesStr = (scheduleArray[1].length === 1 ? `0${scheduleArray[1]}` : scheduleArray[1]);
+				// 			switch (scheduleDay) {
+				// 				case("* * ?"):
+				// 					this.schedule = 'Every 1 Day' + ' at ' + hoursWithOffsetStr + ':' + minutesStr;
+				// 					item.schedule = this.schedule;
+				// 					break;
+				// 				case("? * 2"):
+				// 					this.schedule = 'Every 1 Week' + ' at ' + hoursWithOffsetStr + ':' + minutesStr;
+				// 					item.schedule = this.schedule;
+				// 					break;
+				// 				case("1 * ?"):
+				// 					this.schedule = 'Every 1 Month' + ' at ' + hoursWithOffsetStr + ':' + minutesStr;
+				// 					item.schedule = this.schedule;
+				// 					break;
+				// 			}
+				// 			switch (scheduleTotal) {
+				// 				case("0 0 0/2 * * ?"):
+				// 					this.schedule = 'Every 2 Hours';
+				// 					item.schedule = this.schedule;
+				// 					break;
+				// 			}
+				// 			switch (scheduleTime) {
+				// 				case("0 0 0/4"):
+				// 					this.schedule = 'Every 4 Hours';
+				// 					item.schedule = this.schedule;
+				// 					break;
+				// 				case("0 0 0/8"):
+				// 					this.schedule = 'Every 8 Hours';
+				// 					item.schedule = this.schedule;
+				// 					break;
+				// 				case("0 0 0/12"):
+				// 					this.schedule = 'Every 12 Hours';
+				// 					item.schedule = this.schedule;
+				// 					break;
+				// 			}
+				// 			v.tableData = v.dt;
+				// 		});
+				// 	}
+				// }.bind(datarequest, this);
+				// datarequest.open('GET', `${Host}/tasks`);
+				// datarequest.responseType = 'json';
+				// datarequest.setRequestHeader('Content-Type', 'application/json');
+				// datarequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+				// datarequest.send();
 			},
 			showEditModal: function (edit) {
 				let targetTask = this.tableData.find((item) => item.website === edit);
@@ -335,7 +398,7 @@
 				}
 			},
 			changeDate: function (event) {
-				console.log("tab");
+				// console.log("tab");
 				switch (event.target.value) {
 					case("0 0 0/2 * * ?"):
 						this.flag = false;
