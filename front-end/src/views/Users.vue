@@ -254,7 +254,6 @@
                         this.$refs.modalUser.classList.add('modal__close');
                         this.tableData.push(newUser);
                         this.loadUsers();
-                        // this.$router.push({path: '/users'});
                     });
                 }).catch((error) => {
                     console.log(error)
@@ -453,27 +452,37 @@
                 }
             },
             revokeToken: function(targetUsername) {
-                let revokeTokenRequest = new XMLHttpRequest();
                 let payload = {};
                 payload['action'] = 'revokeToken';
                 payload['targetUsername'] = targetUsername;
-                revokeTokenRequest.onreadystatechange = function (v) {
-                    if (revokeTokenRequest.readyState === 4) {
-                        switch (revokeTokenRequest.status) {
-                            case (200):
-                                v.$notify({
-                                   title: "Token has been revoked",
-                                    type: "success",
-                                    offset: 50
-                                });
-                        }
-                    }
-                }.bind(revokeTokenRequest,this);
-                revokeTokenRequest.responseType = 'json';
-                revokeTokenRequest.open('PATCH', `${Host}/user`);
-                revokeTokenRequest.setRequestHeader("Authorization", `Bearer ${localStorage.getItem('token')}`);
-                revokeTokenRequest.setRequestHeader("Content-Type", "application/json");
-                revokeTokenRequest.send(JSON.stringify(payload));
+                this.$http.patch('/user', payload).then((response) => {
+                    this.$notify({
+                        title: "Token has been revoked",
+                        type: "success",
+                        offset: 50
+                    });
+                }).catch((error) => {
+                   console.log(error)
+                });
+
+                // let revokeTokenRequest = new XMLHttpRequest();
+                // revokeTokenRequest.onreadystatechange = function (v) {
+                //     if (revokeTokenRequest.readyState === 4) {
+                //         switch (revokeTokenRequest.status) {
+                //             case (200):
+                //                 v.$notify({
+                //                    title: "Token has been revoked",
+                //                     type: "success",
+                //                     offset: 50
+                //                 });
+                //         }
+                //     }
+                // }.bind(revokeTokenRequest,this);
+                // revokeTokenRequest.responseType = 'json';
+                // revokeTokenRequest.open('PATCH', `${Host}/user`);
+                // revokeTokenRequest.setRequestHeader("Authorization", `Bearer ${localStorage.getItem('token')}`);
+                // revokeTokenRequest.setRequestHeader("Content-Type", "application/json");
+                // revokeTokenRequest.send(JSON.stringify(payload));
             },
             showEditModal: function (edit) {
                 let editUser = this.tableData.find((item) => item.username === edit);
