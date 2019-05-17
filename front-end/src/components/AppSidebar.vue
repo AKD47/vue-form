@@ -180,49 +180,65 @@ export default {
           editInfo["action"] = 'updateUser';
           editInfo['targetUsername'] = localStorage.getItem('username');
           editInfo['newPassword'] = paramsUser.newPass;
-          let editRequest = new XMLHttpRequest();
-          editRequest.onreadystatechange = function(v) {
-              try {
-                  if (editRequest.readyState === 4) {
-                      switch (editRequest.status) {
-                          case (403):
-                              localStorage.removeItem('token');
-                              localStorage.removeItem('username');
-                              localStorage.removeItem('apiKey');
-                              localStorage.removeItem('role');
-                              v.$router.push({ path: '/login' });
-                              break;
-                          case (400):
-                              localStorage.removeItem('token');
-                              localStorage.removeItem('username');
-                              localStorage.removeItem('apiKey');
-                              localStorage.removeItem('role');
-                              v.$router.push({ path: '/login' });
-                              break;
-                          case (200):
-                              v.$nextTick(() => {
-                                  v.$refs.modal.classList.add('modal__close');
-                                  v.$router.push({path: '/login'});
-                              });
-                              break;
-                          default:
-                              localStorage.removeItem('token');
-                              localStorage.removeItem('username');
-                              localStorage.removeItem('apiKey');
-                              localStorage.removeItem('role');
-                              v.$router.push({ path: '/login' });
-                      }
-                  }
-              }
-              catch (err) {
-                  console.log(err);
-              }
-          }.bind(editRequest, this);
-          editRequest.responseType = 'json';
-          editRequest.open('PATCH', `${Host}/user`);
-          editRequest.setRequestHeader('Content-Type', 'application/json');
-          editRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-          editRequest.send(JSON.stringify(editInfo));
+
+          this.$http.patch('/user', editInfo).then((response) => {
+              this.$nextTick(() => {
+                  this.$refs.modal.classList.add('modal__close');
+                  this.$router.push({path: '/login'});
+              });
+          }).catch((error) => {
+              console.log(error);
+              localStorage.removeItem('token');
+              localStorage.removeItem('username');
+              localStorage.removeItem('apiKey');
+              localStorage.removeItem('role');
+              this.$router.push({ path: '/login' });
+          });
+
+
+          // let editRequest = new XMLHttpRequest();
+          // editRequest.onreadystatechange = function(v) {
+          //     try {
+          //         if (editRequest.readyState === 4) {
+          //             switch (editRequest.status) {
+          //                 case (403):
+          //                     localStorage.removeItem('token');
+          //                     localStorage.removeItem('username');
+          //                     localStorage.removeItem('apiKey');
+          //                     localStorage.removeItem('role');
+          //                     v.$router.push({ path: '/login' });
+          //                     break;
+          //                 case (400):
+          //                     localStorage.removeItem('token');
+          //                     localStorage.removeItem('username');
+          //                     localStorage.removeItem('apiKey');
+          //                     localStorage.removeItem('role');
+          //                     v.$router.push({ path: '/login' });
+          //                     break;
+          //                 case (200):
+          //                     v.$nextTick(() => {
+          //                         v.$refs.modal.classList.add('modal__close');
+          //                         v.$router.push({path: '/login'});
+          //                     });
+          //                     break;
+          //                 default:
+          //                     localStorage.removeItem('token');
+          //                     localStorage.removeItem('username');
+          //                     localStorage.removeItem('apiKey');
+          //                     localStorage.removeItem('role');
+          //                     v.$router.push({ path: '/login' });
+          //             }
+          //         }
+          //     }
+          //     catch (err) {
+          //         console.log(err);
+          //     }
+          // }.bind(editRequest, this);
+          // editRequest.responseType = 'json';
+          // editRequest.open('PATCH', `${Host}/user`);
+          // editRequest.setRequestHeader('Content-Type', 'application/json');
+          // editRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+          // editRequest.send(JSON.stringify(editInfo));
       },
       showNewPass: function () {
           event.preventDefault();
