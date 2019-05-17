@@ -141,27 +141,45 @@
         },
         methods: {
             loadTasksData: function () {
-                let datarequest = new XMLHttpRequest();
-                datarequest.onreadystatechange = function(v) {
-                    if (datarequest.readyState == 4) {
-                        let dt = datarequest.response.data;
-                        let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
-                        dt.forEach((item) => {
-                            item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
-                            if ( item.endedAt !== 0 ) {
-                                item.endedAt = new Date(item.endedAt).toLocaleDateString("en-US", options);
-                            }
-                        });
-                        v.tableData = dt;
-                        // console.log(v.tableData);
-                        v.loading = false;
-                    }
-                }.bind(datarequest, this);//
-                datarequest.open('GET', `${Host}/task-runs?limit=20&page=1&orderBy=startedAt&order=desc`);
-                datarequest.responseType = 'json';
-                datarequest.setRequestHeader('Content-Type', 'application/json');
-                datarequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-                datarequest.send();
+                this.$http.get('/task-runs?limit=20&page=1&orderBy=startedAt&order=desc').then((response) => {
+                    let dt = response.data.data;
+                    // console.log(dt);
+                    let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+                    dt.forEach((item) => {
+                        item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
+                        if ( item.endedAt !== 0 ) {
+                            item.endedAt = new Date(item.endedAt).toLocaleDateString("en-US", options);
+                        }
+                    });
+                    this.tableData = dt;
+                    // console.log(v.tableData);
+                    this.loading = false;
+                }).catch((error) => {
+                    console.log(error);
+                });
+
+                // let datarequest = new XMLHttpRequest();
+                // datarequest.onreadystatechange = function(v) {
+                //     if (datarequest.readyState == 4) {
+                //         let dt = datarequest.response.data;
+                //         console.log(dt);
+                //         let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+                //         dt.forEach((item) => {
+                //             item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
+                //             if ( item.endedAt !== 0 ) {
+                //                 item.endedAt = new Date(item.endedAt).toLocaleDateString("en-US", options);
+                //             }
+                //         });
+                //         v.tableData = dt;
+                //         // console.log(v.tableData);
+                //         v.loading = false;
+                //     }
+                // }.bind(datarequest, this);//
+                // datarequest.open('GET', `${Host}/task-runs?limit=20&page=1&orderBy=startedAt&order=desc`);
+                // datarequest.responseType = 'json';
+                // datarequest.setRequestHeader('Content-Type', 'application/json');
+                // datarequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+                // datarequest.send();
             },
             reloadTasksData(queryInfo) {
                 let refreshQuery = '';
