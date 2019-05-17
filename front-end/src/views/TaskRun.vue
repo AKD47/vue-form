@@ -191,52 +191,75 @@
                 if (queryInfo.filters[1].value !== '') {
                     refreshQuery = refreshQuery + `&website=${queryInfo.filters[1].value}`;
                 }
-                let refreshRequest = new XMLHttpRequest();
-                refreshRequest.onreadystatechange =function (v) {
-                    if (refreshRequest.readyState === 4) {
-                        switch (refreshRequest.status) {
-                            case (403):
-                                localStorage.removeItem('token');
-                                localStorage.removeItem('username');
-                                localStorage.removeItem('apiKey');
-                                localStorage.removeItem('role');
-                                v.$router.push({ path: '/login' });
-                                break;
-                            case (400):
-                                localStorage.removeItem('token');
-                                localStorage.removeItem('username');
-                                localStorage.removeItem('apiKey');
-                                localStorage.removeItem('role');
-                                v.$router.push({ path: '/login' });
-                                break;
-                            case (200):
-                                let dt = refreshRequest.response.data;
-                                let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
-                                dt.forEach((item) => {
-                                    item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
-                                    // console.log(item.endedAt);
-                                    if ( item.endedAt !== 0 ) {
-                                        item.endedAt = new Date(item.endedAt).toLocaleDateString("en-US", options);
-                                    }
-                                });
-                                v.tableData = dt;
-                                v.total = queryInfo.pageSize * refreshRequest.response.pageCount;
-                                v.loading = false;
-                                break;
-                            default:
-                                localStorage.removeItem('token');
-                                localStorage.removeItem('username');
-                                localStorage.removeItem('apiKey');
-                                localStorage.removeItem('role');
-                                v.$router.push({ path: '/login' });
+
+                this.$http.get(`/task-runs?${refreshQuery}`).then((response) => {
+                    let dt = response.data.data;
+                    let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+                    dt.forEach((item) => {
+                        item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
+                        // console.log(item.endedAt);
+                        if ( item.endedAt !== 0 ) {
+                            item.endedAt = new Date(item.endedAt).toLocaleDateString("en-US", options);
                         }
-                    }
-                }.bind(refreshRequest, this);
-                refreshRequest.responseType = 'json';
-                refreshRequest.open('GET', `${Host}/task-runs?${refreshQuery}`);
-                refreshRequest.setRequestHeader('Content-Type', 'application/json');
-                refreshRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-                refreshRequest.send();
+                    });
+                    this.tableData = dt;
+                    this.total = queryInfo.pageSize * response.data.pageCount;
+                    this.loading = false;
+                }).catch((error) => {
+                   console.log(error);
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('apiKey');
+                    localStorage.removeItem('role');
+                    this.$router.push({ path: '/login' });
+                });
+
+                // let refreshRequest = new XMLHttpRequest();
+                // refreshRequest.onreadystatechange =function (v) {
+                //     if (refreshRequest.readyState === 4) {
+                //         switch (refreshRequest.status) {
+                //             case (403):
+                //                 localStorage.removeItem('token');
+                //                 localStorage.removeItem('username');
+                //                 localStorage.removeItem('apiKey');
+                //                 localStorage.removeItem('role');
+                //                 v.$router.push({ path: '/login' });
+                //                 break;
+                //             case (400):
+                //                 localStorage.removeItem('token');
+                //                 localStorage.removeItem('username');
+                //                 localStorage.removeItem('apiKey');
+                //                 localStorage.removeItem('role');
+                //                 v.$router.push({ path: '/login' });
+                //                 break;
+                //             case (200):
+                //                 let dt = refreshRequest.response.data;
+                //                 let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+                //                 dt.forEach((item) => {
+                //                     item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
+                //                     // console.log(item.endedAt);
+                //                     if ( item.endedAt !== 0 ) {
+                //                         item.endedAt = new Date(item.endedAt).toLocaleDateString("en-US", options);
+                //                     }
+                //                 });
+                //                 v.tableData = dt;
+                //                 v.total = queryInfo.pageSize * refreshRequest.response.pageCount;
+                //                 v.loading = false;
+                //                 break;
+                //             default:
+                //                 localStorage.removeItem('token');
+                //                 localStorage.removeItem('username');
+                //                 localStorage.removeItem('apiKey');
+                //                 localStorage.removeItem('role');
+                //                 v.$router.push({ path: '/login' });
+                //         }
+                //     }
+                // }.bind(refreshRequest, this);
+                // refreshRequest.responseType = 'json';
+                // refreshRequest.open('GET', `${Host}/task-runs?${refreshQuery}`);
+                // refreshRequest.setRequestHeader('Content-Type', 'application/json');
+                // refreshRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+                // refreshRequest.send();
                 this.loading = true;
 
             },
