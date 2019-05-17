@@ -120,18 +120,26 @@ export default {
           let info = {};
           info["action"] = 'revokeToken';
           info['targetUsername'] = localStorage.getItem('username');
-          let revokeRequest = new XMLHttpRequest();
-          revokeRequest.onreadystatechange = function (v) {
-              if (revokeRequest.readyState === 4) {
-                  localStorage.setItem('apiKey', revokeRequest.response.apiKey);
-                  v.key = localStorage.getItem('apiKey');
-              }
-          }.bind(revokeRequest, this);
-          revokeRequest.open('PATCH', `${Host}/user`);
-          revokeRequest.responseType = 'json';
-          revokeRequest.setRequestHeader('Content-Type', 'application/json');
-          revokeRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-          revokeRequest.send(JSON.stringify(info));
+
+          this.$http.patch('/user', info).then((response) => {
+              localStorage.setItem('apiKey', response.data.apiKey);
+              this.key = localStorage.getItem('apiKey');
+          }).catch((error) => {
+             console.log(error);
+          });
+
+          // let revokeRequest = new XMLHttpRequest();
+          // revokeRequest.onreadystatechange = function (v) {
+          //     if (revokeRequest.readyState === 4) {
+          //         localStorage.setItem('apiKey', revokeRequest.response.apiKey);
+          //         v.key = localStorage.getItem('apiKey');
+          //     }
+          // }.bind(revokeRequest, this);
+          // revokeRequest.open('PATCH', `${Host}/user`);
+          // revokeRequest.responseType = 'json';
+          // revokeRequest.setRequestHeader('Content-Type', 'application/json');
+          // revokeRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+          // revokeRequest.send(JSON.stringify(info));
       },
       changePasswordModal: function () {
           let modal = document.getElementById('changePasswordModal');
