@@ -350,25 +350,35 @@
 				editInfo['newStatus'] = taskParams.status;
 				editInfo['newLimit'] = taskParams.limit;
 				editInfo['timezoneOffset'] = new Date().getTimezoneOffset();
-				let editRequest = new XMLHttpRequest();
-				editRequest.onreadystatechange = function(v) {
-					try {
-						if (editRequest.readyState === 4) {
-							v.tableData[targetTaskIndex].schedule = taskParams.schedule;
-							v.tableData[targetTaskIndex].status = taskParams.status;
-							v.tableData[targetTaskIndex].limit = taskParams.limit;
-							v.loadTaskData(targetTaskIndex);
-						}
-					}
-					catch (err) {
-						console.log(err);
-					}
-				}.bind(editRequest, this);
-				editRequest.responseType = 'json';
-				editRequest.open('PATCH', `${Host}/tasks`);
-				editRequest.setRequestHeader('Content-Type', 'application/json');
-				editRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-				editRequest.send(JSON.stringify(editInfo));
+
+				this.$http.patch('/tasks', editInfo).then((response) => {
+                    this.tableData[targetTaskIndex].schedule = taskParams.schedule;
+                    this.tableData[targetTaskIndex].status = taskParams.status;
+                    this.tableData[targetTaskIndex].limit = taskParams.limit;
+                    this.loadTaskData(targetTaskIndex);
+				}).catch((error) => {
+				   console.log(error)
+				});
+
+				// let editRequest = new XMLHttpRequest();
+				// editRequest.onreadystatechange = function(v) {
+				// 	try {
+				// 		if (editRequest.readyState === 4) {
+				// 			v.tableData[targetTaskIndex].schedule = taskParams.schedule;
+				// 			v.tableData[targetTaskIndex].status = taskParams.status;
+				// 			v.tableData[targetTaskIndex].limit = taskParams.limit;
+				// 			v.loadTaskData(targetTaskIndex);
+				// 		}
+				// 	}
+				// 	catch (err) {
+				// 		console.log(err);
+				// 	}
+				// }.bind(editRequest, this);
+				// editRequest.responseType = 'json';
+				// editRequest.open('PATCH', `${Host}/tasks`);
+				// editRequest.setRequestHeader('Content-Type', 'application/json');
+				// editRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+				// editRequest.send(JSON.stringify(editInfo));
 				this.loading = true;
 			},
 			maxLengthCheck: function () {
