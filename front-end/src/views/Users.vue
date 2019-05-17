@@ -575,51 +575,63 @@
                 }
                 let submit = document.getElementById('submitUserUpdate');
                 submit.disabled = true;
-                let editRequest = new XMLHttpRequest();
-                editRequest.onreadystatechange = function(v) {
-                    try {
-                        if (editRequest.readyState == 4) {
-                            switch (editRequest.status) {
-                                case (403):
-                                    localStorage.removeItem('token');
-                                    localStorage.removeItem('username');
-                                    localStorage.removeItem('apiKey');
-                                    localStorage.removeItem('role');
-                                    v.$router.push({ path: '/login' });
-                                    break;
-                                case (400):
-                                    localStorage.removeItem('token');
-                                    localStorage.removeItem('username');
-                                    localStorage.removeItem('apiKey');
-                                    localStorage.removeItem('role');
-                                    v.$router.push({ path: '/login' });
-                                    break;
-                                case (200):
-                                    v.tableData[targetUserIndex].username = paramsUser.username;
-                                    v.tableData[targetUserIndex].role = paramsUser.role;
-                                    v.$nextTick(() => {
-                                        v.$refs.modal.classList.add('modal__close');
-                                        v.$router.push({path: '/users'});
-                                    });
-                                    break;
-                                default:
-                                    localStorage.removeItem('token');
-                                    localStorage.removeItem('username');
-                                    localStorage.removeItem('apiKey');
-                                    localStorage.removeItem('role');
-                                    v.$router.push({ path: '/login' });
-                            }
-                        }
-                    }
-                    catch (err) {
-                        console.log(err);
-                    }
-                }.bind(editRequest, this);
-                editRequest.responseType = 'json';
-                editRequest.open('PATCH', `${Host}/user`);
-                editRequest.setRequestHeader('Content-Type', 'application/json');
-                editRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-                editRequest.send(JSON.stringify(editInfo));
+
+                this.$http.patch('/user', editInfo).then((response) => {
+                    this.tableData[targetUserIndex].username = paramsUser.username;
+                    this.tableData[targetUserIndex].role = paramsUser.role;
+                    this.$nextTick(() => {
+                        this.$refs.modal.classList.add('modal__close');
+                        this.loadUsers();
+                    });
+                }).catch((error) => {
+                   console.log(error)
+                });
+
+                // let editRequest = new XMLHttpRequest();
+                // editRequest.onreadystatechange = function(v) {
+                //     try {
+                //         if (editRequest.readyState == 4) {
+                //             switch (editRequest.status) {
+                //                 case (403):
+                //                     localStorage.removeItem('token');
+                //                     localStorage.removeItem('username');
+                //                     localStorage.removeItem('apiKey');
+                //                     localStorage.removeItem('role');
+                //                     v.$router.push({ path: '/login' });
+                //                     break;
+                //                 case (400):
+                //                     localStorage.removeItem('token');
+                //                     localStorage.removeItem('username');
+                //                     localStorage.removeItem('apiKey');
+                //                     localStorage.removeItem('role');
+                //                     v.$router.push({ path: '/login' });
+                //                     break;
+                //                 case (200):
+                //                     v.tableData[targetUserIndex].username = paramsUser.username;
+                //                     v.tableData[targetUserIndex].role = paramsUser.role;
+                //                     v.$nextTick(() => {
+                //                         v.$refs.modal.classList.add('modal__close');
+                //                         v.$router.push({path: '/users'});
+                //                     });
+                //                     break;
+                //                 default:
+                //                     localStorage.removeItem('token');
+                //                     localStorage.removeItem('username');
+                //                     localStorage.removeItem('apiKey');
+                //                     localStorage.removeItem('role');
+                //                     v.$router.push({ path: '/login' });
+                //             }
+                //         }
+                //     }
+                //     catch (err) {
+                //         console.log(err);
+                //     }
+                // }.bind(editRequest, this);
+                // editRequest.responseType = 'json';
+                // editRequest.open('PATCH', `${Host}/user`);
+                // editRequest.setRequestHeader('Content-Type', 'application/json');
+                // editRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+                // editRequest.send(JSON.stringify(editInfo));
             },
         }
     }
