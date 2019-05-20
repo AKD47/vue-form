@@ -172,57 +172,104 @@
             loadTimeSpentChart: async function () {
                 let timeSpentValues = [];
                 let timeSpentLabels = [];
-                let allTasks = new XMLHttpRequest();
-                allTasks.onreadystatechange = function(v) {
-                    if (allTasks.readyState == 4) {
-                        let data = allTasks.response.data;
-                        let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'};
-                        data.forEach((item) => {
-                            if (item.endedAt != 0) {
-                                timeSpentValues.push(parseFloat((item.endedAt - item.startedAt) / 3600000).toFixed(2));
-                                item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
-                                timeSpentLabels.push(item.startedAt);
-                            }
-                        });
-                        v.timeSpentValues = timeSpentValues;
-                        v.timeSpentLabels = timeSpentLabels;
-                        let successChart = document.getElementById('prodTimeChart');
-                        let labels = v.timeSpentLabels;
-                        let items = v.timeSpentValues;
-                        let succesChart = new Chart(successChart, {
-                            type: 'line',
-                            data: {
-                                labels: labels,
-                                datasets: [{
-                                    label: 'Task runtime (in hours)',
-                                    data: items,
-                                    backgroundColor: 'rgba(49,139,227,0.3)',
-                                    borderColor: '#318be3',
-                                    borderWidth: 3
+
+                this.$http.get('/task-runs?limit=200&page=1').then((response) => {
+                    let data = response.data.data;
+                    let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'};
+                    data.forEach((item) => {
+                        if (item.endedAt != 0) {
+                            timeSpentValues.push(parseFloat((item.endedAt - item.startedAt) / 3600000).toFixed(2));
+                            item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
+                            timeSpentLabels.push(item.startedAt);
+                        }
+                    });
+                    this.timeSpentValues = timeSpentValues;
+                    this.timeSpentLabels = timeSpentLabels;
+                    let successChart = document.getElementById('prodTimeChart');
+                    let labels = this.timeSpentLabels;
+                    let items = this.timeSpentValues;
+                    let succesChart = new Chart(successChart, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Task runtime (in hours)',
+                                data: items,
+                                backgroundColor: 'rgba(49,139,227,0.3)',
+                                borderColor: '#318be3',
+                                borderWidth: 3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            loading: true,
+                            lineTension: 1,
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true,
+                                        padding: 25,
+                                    }
                                 }]
-                            },
-                            options: {
-                                responsive: true,
-                                loading: true,
-                                lineTension: 1,
-                                scales: {
-                                    yAxes: [{
-                                        ticks: {
-                                            beginAtZero: true,
-                                            padding: 25,
-                                        }
-                                    }]
-                                }
                             }
-                        });
-                        v.loading = false;
-                    }
-                }.bind(allTasks, this);//
-                allTasks.open('GET', `${Host}/task-runs?limit=200&page=1`);
-                allTasks.responseType = 'json';
-                allTasks.setRequestHeader('Content-Type', 'application/json');
-                allTasks.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-                allTasks.send();
+                        }
+                    });
+                    this.loading = false;
+                }).catch((error) => {
+                   console.log(error);
+                });
+
+                // let allTasks = new XMLHttpRequest();
+                // allTasks.onreadystatechange = function(v) {
+                //     if (allTasks.readyState == 4) {
+                //         let data = allTasks.response.data;
+                //         let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'};
+                //         data.forEach((item) => {
+                //             if (item.endedAt != 0) {
+                //                 timeSpentValues.push(parseFloat((item.endedAt - item.startedAt) / 3600000).toFixed(2));
+                //                 item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
+                //                 timeSpentLabels.push(item.startedAt);
+                //             }
+                //         });
+                //         v.timeSpentValues = timeSpentValues;
+                //         v.timeSpentLabels = timeSpentLabels;
+                //         let successChart = document.getElementById('prodTimeChart');
+                //         let labels = v.timeSpentLabels;
+                //         let items = v.timeSpentValues;
+                //         let succesChart = new Chart(successChart, {
+                //             type: 'line',
+                //             data: {
+                //                 labels: labels,
+                //                 datasets: [{
+                //                     label: 'Task runtime (in hours)',
+                //                     data: items,
+                //                     backgroundColor: 'rgba(49,139,227,0.3)',
+                //                     borderColor: '#318be3',
+                //                     borderWidth: 3
+                //                 }]
+                //             },
+                //             options: {
+                //                 responsive: true,
+                //                 loading: true,
+                //                 lineTension: 1,
+                //                 scales: {
+                //                     yAxes: [{
+                //                         ticks: {
+                //                             beginAtZero: true,
+                //                             padding: 25,
+                //                         }
+                //                     }]
+                //                 }
+                //             }
+                //         });
+                //         v.loading = false;
+                //     }
+                // }.bind(allTasks, this);//
+                // allTasks.open('GET', `${Host}/task-runs?limit=200&page=1`);
+                // allTasks.responseType = 'json';
+                // allTasks.setRequestHeader('Content-Type', 'application/json');
+                // allTasks.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+                // allTasks.send();
                 this.loading = true;
             },
             loadFailedChart: async function () {
