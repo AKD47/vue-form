@@ -69,57 +69,104 @@
                 // console.log('success');
                 let tasksSuccessData = [];
                 let tasksSuccessCount = [];
-                let allTasks = new XMLHttpRequest();
-                allTasks.onreadystatechange = function(v) {
-                    if (allTasks.readyState == 4) {
-                        let data = allTasks.response.data;
-                        let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'};
-                        data.forEach((item) => {
-                            item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
-                            tasksSuccessData.push(item.startedAt);
-                            if(item.count > 0) {
-                                tasksSuccessCount.push(item.count);
-                            }
-                        });
-                        v.chartSuccessData = tasksSuccessCount;
-                        v.chartSuccessLabels = tasksSuccessData;
-                        let successChart = document.getElementById('prodSuccessChart');
-                        let labels = v.chartSuccessLabels;
-                        let items = v.chartSuccessData;
-                        let succesChart = new Chart(successChart, {
-                            type: 'line',
-                            data: {
-                                labels: labels,
-                                datasets: [{
-                                    label: 'Number of products',
-                                    data: items,
-                                    backgroundColor: 'rgba(49,139,227,0.3)',
-                                    borderColor: '#318be3',
-                                    borderWidth: 3
+
+                this.$http.get('/task-runs?limit=200&page=1').then((response) => {
+                    let data = response.data.data;
+                    let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'};
+                    data.forEach((item) => {
+                        item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
+                        tasksSuccessData.push(item.startedAt);
+                        if(item.count > 0) {
+                            tasksSuccessCount.push(item.count);
+                        }
+                    });
+                    this.chartSuccessData = tasksSuccessCount;
+                    this.chartSuccessLabels = tasksSuccessData;
+                    let successChart = document.getElementById('prodSuccessChart');
+                    let labels = this.chartSuccessLabels;
+                    let items = this.chartSuccessData;
+                    let succesChart = new Chart(successChart, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Number of products',
+                                data: items,
+                                backgroundColor: 'rgba(49,139,227,0.3)',
+                                borderColor: '#318be3',
+                                borderWidth: 3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            loading: true,
+                            lineTension: 1,
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true,
+                                        padding: 25,
+                                    }
                                 }]
-                            },
-                            options: {
-                                responsive: true,
-                                loading: true,
-                                lineTension: 1,
-                                scales: {
-                                    yAxes: [{
-                                        ticks: {
-                                            beginAtZero: true,
-                                            padding: 25,
-                                        }
-                                    }]
-                                }
                             }
-                        });
-                        v.loading = false;
-                    }
-                }.bind(allTasks, this);//
-                allTasks.open('GET', `${Host}/task-runs?limit=200&page=1`);
-                allTasks.responseType = 'json';
-                allTasks.setRequestHeader('Content-Type', 'application/json');
-                allTasks.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-                allTasks.send();
+                        }
+                    });
+                    this.loading = false;
+                }).catch((error) => {
+                   console.log(error);
+                });
+
+                // let allTasks = new XMLHttpRequest();
+                // allTasks.onreadystatechange = function(v) {
+                //     if (allTasks.readyState == 4) {
+                //         let data = allTasks.response.data;
+                //         let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'};
+                //         data.forEach((item) => {
+                //             item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
+                //             tasksSuccessData.push(item.startedAt);
+                //             if(item.count > 0) {
+                //                 tasksSuccessCount.push(item.count);
+                //             }
+                //         });
+                //         v.chartSuccessData = tasksSuccessCount;
+                //         v.chartSuccessLabels = tasksSuccessData;
+                //         let successChart = document.getElementById('prodSuccessChart');
+                //         let labels = v.chartSuccessLabels;
+                //         let items = v.chartSuccessData;
+                //         let succesChart = new Chart(successChart, {
+                //             type: 'line',
+                //             data: {
+                //                 labels: labels,
+                //                 datasets: [{
+                //                     label: 'Number of products',
+                //                     data: items,
+                //                     backgroundColor: 'rgba(49,139,227,0.3)',
+                //                     borderColor: '#318be3',
+                //                     borderWidth: 3
+                //                 }]
+                //             },
+                //             options: {
+                //                 responsive: true,
+                //                 loading: true,
+                //                 lineTension: 1,
+                //                 scales: {
+                //                     yAxes: [{
+                //                         ticks: {
+                //                             beginAtZero: true,
+                //                             padding: 25,
+                //                         }
+                //                     }]
+                //                 }
+                //             }
+                //         });
+                //         v.loading = false;
+                //     }
+                // }.bind(allTasks, this);//
+                // allTasks.open('GET', `${Host}/task-runs?limit=200&page=1`);
+                // allTasks.responseType = 'json';
+                // allTasks.setRequestHeader('Content-Type', 'application/json');
+                // allTasks.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+                // allTasks.send();
                 this.loading = true;
             },
             loadTimeSpentChart: async function () {
