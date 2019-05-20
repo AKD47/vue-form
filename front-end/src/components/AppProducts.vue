@@ -92,43 +92,47 @@
         },
         methods: {
             loadProductsData: function () {
-                let datarequest = new XMLHttpRequest();
-                datarequest.onreadystatechange = function(v) {
-                    if (datarequest.readyState == 4) {
-                        switch (datarequest.status) {
-                            case (403):
-                                localStorage.removeItem('token');
-                                localStorage.removeItem('username');
-                                localStorage.removeItem('apiKey');
-                                localStorage.removeItem('role');
-                                v.$router.push({ path: '/login' });
-                                break;
-                            // case (400):
-                            //     localStorage.removeItem('token');
-                            //     localStorage.removeItem('username');
-                            //     localStorage.removeItem('apiKey');
-                            //     localStorage.removeItem('role');
-                            //     v.$router.push({ path: '/login' });
-                            //     break;
-                            case (200):
-                                v.loading = false;
-                                v.tableData = datarequest.response.data;
-                                // v.total = datarequest.response.pageCount * 10;
-                                break;
-                            default:
-                                localStorage.removeItem('token');
-                                localStorage.removeItem('username');
-                                localStorage.removeItem('apiKey');
-                                localStorage.removeItem('role');
-                                v.$router.push({ path: '/login' });
-                        }
-                    }
-                }.bind(datarequest, this);//
-                datarequest.open('GET', `${Host}/task-runs/${this.taskRunId}`);
-                datarequest.responseType = 'json';
-                datarequest.setRequestHeader('Content-Type', 'application/json');
-                datarequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-                datarequest.send();
+                this.$http.get(`/task-runs/${this.taskRunId}`).then((response) => {
+                    this.loading = false;
+                    this.tableData = response.data.data;
+                }).catch((error) => {
+                   console.log(error);
+                   localStorage.removeItem('token');
+                   localStorage.removeItem('username');
+                   localStorage.removeItem('apiKey');
+                   localStorage.removeItem('role');
+                   this.$router.push({ path: '/login' });
+                });
+
+                // let datarequest = new XMLHttpRequest();
+                // datarequest.onreadystatechange = function(v) {
+                //     if (datarequest.readyState == 4) {
+                //         switch (datarequest.status) {
+                //             case (403):
+                //                 localStorage.removeItem('token');
+                //                 localStorage.removeItem('username');
+                //                 localStorage.removeItem('apiKey');
+                //                 localStorage.removeItem('role');
+                //                 v.$router.push({ path: '/login' });
+                //                 break;
+                //             case (200):
+                //                 v.loading = false;
+                //                 v.tableData = datarequest.response.data;
+                //                 break;
+                //             default:
+                //                 localStorage.removeItem('token');
+                //                 localStorage.removeItem('username');
+                //                 localStorage.removeItem('apiKey');
+                //                 localStorage.removeItem('role');
+                //                 v.$router.push({ path: '/login' });
+                //         }
+                //     }
+                // }.bind(datarequest, this);//
+                // datarequest.open('GET', `${Host}/task-runs/${this.taskRunId}`);
+                // datarequest.responseType = 'json';
+                // datarequest.setRequestHeader('Content-Type', 'application/json');
+                // datarequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+                // datarequest.send();
             },
             showProductModal: function (id) {
                 event.preventDefault();
@@ -164,46 +168,57 @@
                 if (queryInfo.filters[0].value !== '') {
                     refreshQuery = refreshQuery + `&search=${queryInfo.filters[0].value}`;
                 }
-                let refreshRequest = new XMLHttpRequest();
-                refreshRequest.onreadystatechange =function (v) {
-                    if (refreshRequest.readyState === 4) {
-                        switch (refreshRequest.status) {
-                            case (403):
-                                localStorage.removeItem('token');
-                                localStorage.removeItem('username');
-                                localStorage.removeItem('apiKey');
-                                localStorage.removeItem('role');
-                                v.$router.push({ path: '/login' });
-                                break;
-                            case (400):
-                                localStorage.removeItem('token');
-                                localStorage.removeItem('username');
-                                localStorage.removeItem('apiKey');
-                                localStorage.removeItem('role');
-                                v.$router.push({ path: '/login' });
-                                break;
-                            case (200):
-                                v.tableData = refreshRequest.response.data;
-                                v.total = queryInfo.pageSize * refreshRequest.response.pageCount;
-                                break;
-                            default:
-                                localStorage.removeItem('token');
-                                localStorage.removeItem('username');
-                                localStorage.removeItem('apiKey');
-                                localStorage.removeItem('role');
-                                v.$router.push({ path: '/login' });
-                        }
-                    }
-                }.bind(refreshRequest, this);
-                refreshRequest.responseType = 'json';
-                refreshRequest.open('GET', `${Host}/products?${refreshQuery}`);
-                refreshRequest.setRequestHeader('Content-Type', 'application/json');
-                refreshRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-                refreshRequest.send();
+                this.$http.get(`/products?${refreshQuery}`).then((response) => {
+                    this.tableData = response.data.data;
+                    this.total = queryInfo.pageSize * response.data.pageCount;
+                }).catch((error) => {
+                   console.log(error);
+                   localStorage.removeItem('token');
+                   localStorage.removeItem('username');
+                   localStorage.removeItem('apiKey');
+                   localStorage.removeItem('role');
+                   this.$router.push({ path: '/login' });
+                });
+
+                // let refreshRequest = new XMLHttpRequest();
+                // refreshRequest.onreadystatechange =function (v) {
+                //     if (refreshRequest.readyState === 4) {
+                //         switch (refreshRequest.status) {
+                //             case (403):
+                //                 localStorage.removeItem('token');
+                //                 localStorage.removeItem('username');
+                //                 localStorage.removeItem('apiKey');
+                //                 localStorage.removeItem('role');
+                //                 v.$router.push({ path: '/login' });
+                //                 break;
+                //             case (400):
+                //                 localStorage.removeItem('token');
+                //                 localStorage.removeItem('username');
+                //                 localStorage.removeItem('apiKey');
+                //                 localStorage.removeItem('role');
+                //                 v.$router.push({ path: '/login' });
+                //                 break;
+                //             case (200):
+                //                 v.tableData = refreshRequest.response.data;
+                //                 v.total = queryInfo.pageSize * refreshRequest.response.pageCount;
+                //                 break;
+                //             default:
+                //                 localStorage.removeItem('token');
+                //                 localStorage.removeItem('username');
+                //                 localStorage.removeItem('apiKey');
+                //                 localStorage.removeItem('role');
+                //                 v.$router.push({ path: '/login' });
+                //         }
+                //     }
+                // }.bind(refreshRequest, this);
+                // refreshRequest.responseType = 'json';
+                // refreshRequest.open('GET', `${Host}/products?${refreshQuery}`);
+                // refreshRequest.setRequestHeader('Content-Type', 'application/json');
+                // refreshRequest.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+                // refreshRequest.send();
             },
             deleteProduct: function (prodId) {
                 let delProduct = this.tableData.find((item) => item.productId === prodId);
-                // console.log(delProduct);
                 let deleteRequest = new XMLHttpRequest();
                 deleteRequest.onreadystatechange = function (v) {
                     if (deleteRequest.readyState == 4) {
