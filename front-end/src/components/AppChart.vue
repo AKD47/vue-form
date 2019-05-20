@@ -396,173 +396,316 @@
 
                 let tasksSuccessData = [];
                 let tasksSuccessCount = [];
-                let allSuccessTasks = new XMLHttpRequest();
-                allSuccessTasks.onreadystatechange = function(v) {
-                    if (allSuccessTasks.readyState === 4) {
-                        let data = allSuccessTasks.response.data;
-                        let options = { year: 'numeric', month: 'long', day: 'numeric'};
-                        data.forEach((item) => {
-                            item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
-                            tasksSuccessData.push(item.startedAt);
-                            if ( item.count > 0 && item.website === webValue) {
-                                tasksSuccessCount.push(item.count);
-                            }
-                        });
-                        v.chartSuccessData = tasksSuccessCount;
-                        // console.log( v.chartData);
-                        v.chartSuccessLabels = tasksSuccessData;
+                this.$http.get(`/task-runs?limit=200&page=1&website=${refreshQuery}`).then((response) => {
+                    let data = response.data.data;
+                    let options = { year: 'numeric', month: 'long', day: 'numeric'};
+                    data.forEach((item) => {
+                        item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
+                        tasksSuccessData.push(item.startedAt);
+                        if ( item.count > 0 && item.website === webValue) {
+                            tasksSuccessCount.push(item.count);
+                        }
+                    });
+                    this.chartSuccessData = tasksSuccessCount;
+                    this.chartSuccessLabels = tasksSuccessData;
 
-                        let chart = document.getElementById('prodSuccessChart');
-                        let labels = v.chartSuccessLabels;
-                        let items = v.chartSuccessData;
-                        let myChart = new Chart(chart, {
-                            type: 'line',
-                            data: {
-                                labels: labels,
-                                datasets: [{
-                                    label: 'Number of products',
-                                    data: items,
-                                    backgroundColor: 'rgba(49,139,227,0.3)',
-                                    borderColor: '#318be3',
-                                    borderWidth: 3
+                    let chart = document.getElementById('prodSuccessChart');
+                    let labels = this.chartSuccessLabels;
+                    let items = this.chartSuccessData;
+                    let myChart = new Chart(chart, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Number of products',
+                                data: items,
+                                backgroundColor: 'rgba(49,139,227,0.3)',
+                                borderColor: '#318be3',
+                                borderWidth: 3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            loading: true,
+                            lineTension: 1,
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true,
+                                        padding: 25,
+                                    }
                                 }]
-                            },
-                            options: {
-                                responsive: true,
-                                loading: true,
-                                lineTension: 1,
-                                scales: {
-                                    yAxes: [{
-                                        ticks: {
-                                            beginAtZero: true,
-                                            padding: 25,
-                                        }
-                                    }]
-                                }
                             }
-                        });
-                        v.loading = false;
-                    }
-                }.bind(allSuccessTasks, this);//
-                allSuccessTasks.open('GET', `${Host}/task-runs?limit=200&page=1&website=${refreshQuery}`);
-                allSuccessTasks.responseType = 'json';
-                allSuccessTasks.setRequestHeader('Content-Type', 'application/json');
-                allSuccessTasks.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-                allSuccessTasks.send();
+                        }
+                    });
+                    this.loading = false;
+                }).catch((error) => {
+                    console.log(error);
+                });
+
+                // let allSuccessTasks = new XMLHttpRequest();
+                // allSuccessTasks.onreadystatechange = function(v) {
+                //     if (allSuccessTasks.readyState === 4) {
+                //         let data = allSuccessTasks.response.data;
+                //         let options = { year: 'numeric', month: 'long', day: 'numeric'};
+                //         data.forEach((item) => {
+                //             item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
+                //             tasksSuccessData.push(item.startedAt);
+                //             if ( item.count > 0 && item.website === webValue) {
+                //                 tasksSuccessCount.push(item.count);
+                //             }
+                //         });
+                //         v.chartSuccessData = tasksSuccessCount;
+                //         // console.log( v.chartData);
+                //         v.chartSuccessLabels = tasksSuccessData;
+                //
+                //         let chart = document.getElementById('prodSuccessChart');
+                //         let labels = v.chartSuccessLabels;
+                //         let items = v.chartSuccessData;
+                //         let myChart = new Chart(chart, {
+                //             type: 'line',
+                //             data: {
+                //                 labels: labels,
+                //                 datasets: [{
+                //                     label: 'Number of products',
+                //                     data: items,
+                //                     backgroundColor: 'rgba(49,139,227,0.3)',
+                //                     borderColor: '#318be3',
+                //                     borderWidth: 3
+                //                 }]
+                //             },
+                //             options: {
+                //                 responsive: true,
+                //                 loading: true,
+                //                 lineTension: 1,
+                //                 scales: {
+                //                     yAxes: [{
+                //                         ticks: {
+                //                             beginAtZero: true,
+                //                             padding: 25,
+                //                         }
+                //                     }]
+                //                 }
+                //             }
+                //         });
+                //         v.loading = false;
+                //     }
+                // }.bind(allSuccessTasks, this);//
+                // allSuccessTasks.open('GET', `${Host}/task-runs?limit=200&page=1&website=${refreshQuery}`);
+                // allSuccessTasks.responseType = 'json';
+                // allSuccessTasks.setRequestHeader('Content-Type', 'application/json');
+                // allSuccessTasks.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+                // allSuccessTasks.send();
 
                 let timeSpentValues = [];
                 let timeSpentLabels = [];
-                let allTasks = new XMLHttpRequest();
-                allTasks.onreadystatechange = function(v) {
-                    if (allTasks.readyState == 4) {
-                        let data = allTasks.response.data;
-                        let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'};
-                        data.forEach((item) => {
-                            if (item.endedAt != 0 && item.website === webValue) {
-                                timeSpentValues.push(parseFloat((item.endedAt - item.startedAt) / 3600000).toFixed(2));
-                                item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
-                                timeSpentLabels.push(item.startedAt);
-                            }
-                        });
-                        v.timeSpentValues = timeSpentValues;
-                        v.timeSpentLabels = timeSpentLabels;
-                        let successChart = document.getElementById('prodTimeChart');
-                        let labels = v.timeSpentLabels;
-                        let items = v.timeSpentValues;
-                        let succesChart = new Chart(successChart, {
-                            type: 'line',
-                            data: {
-                                labels: labels,
-                                datasets: [{
-                                    label: 'Task runtime (in hours)',
-                                    data: items,
-                                    backgroundColor: 'rgba(49,139,227,0.3)',
-                                    borderColor: '#318be3',
-                                    borderWidth: 3
+                this.$http.get('/task-runs?limit=200&page=1').then((response) => {
+                    let data = response.data.data;
+                    let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'};
+                    data.forEach((item) => {
+                        if (item.endedAt != 0 && item.website === webValue) {
+                            timeSpentValues.push(parseFloat((item.endedAt - item.startedAt) / 3600000).toFixed(2));
+                            item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
+                            timeSpentLabels.push(item.startedAt);
+                        }
+                    });
+                    this.timeSpentValues = timeSpentValues;
+                    this.timeSpentLabels = timeSpentLabels;
+                    let successChart = document.getElementById('prodTimeChart');
+                    let labels = this.timeSpentLabels;
+                    let items = this.timeSpentValues;
+                    let succesChart = new Chart(successChart, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Task runtime (in hours)',
+                                data: items,
+                                backgroundColor: 'rgba(49,139,227,0.3)',
+                                borderColor: '#318be3',
+                                borderWidth: 3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            loading: true,
+                            lineTension: 1,
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true,
+                                        padding: 25,
+                                    }
                                 }]
-                            },
-                            options: {
-                                responsive: true,
-                                loading: true,
-                                lineTension: 1,
-                                scales: {
-                                    yAxes: [{
-                                        ticks: {
-                                            beginAtZero: true,
-                                            padding: 25,
-                                        }
-                                    }]
-                                }
                             }
-                        });
-                        v.loading = false;
-                    }
-                }.bind(allTasks, this);//
-                allTasks.open('GET', `${Host}/task-runs?limit=200&page=1`);
-                allTasks.responseType = 'json';
-                allTasks.setRequestHeader('Content-Type', 'application/json');
-                allTasks.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-                allTasks.send();
+                        }
+                    });
+                    this.loading = false;
+                }).catch((error) => {
+                   console.log(error);
+                });
+
+                // let allTasks = new XMLHttpRequest();
+                // allTasks.onreadystatechange = function(v) {
+                //     if (allTasks.readyState == 4) {
+                //         let data = allTasks.response.data;
+                //         let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'};
+                //         data.forEach((item) => {
+                //             if (item.endedAt != 0 && item.website === webValue) {
+                //                 timeSpentValues.push(parseFloat((item.endedAt - item.startedAt) / 3600000).toFixed(2));
+                //                 item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
+                //                 timeSpentLabels.push(item.startedAt);
+                //             }
+                //         });
+                //         v.timeSpentValues = timeSpentValues;
+                //         v.timeSpentLabels = timeSpentLabels;
+                //         let successChart = document.getElementById('prodTimeChart');
+                //         let labels = v.timeSpentLabels;
+                //         let items = v.timeSpentValues;
+                //         let succesChart = new Chart(successChart, {
+                //             type: 'line',
+                //             data: {
+                //                 labels: labels,
+                //                 datasets: [{
+                //                     label: 'Task runtime (in hours)',
+                //                     data: items,
+                //                     backgroundColor: 'rgba(49,139,227,0.3)',
+                //                     borderColor: '#318be3',
+                //                     borderWidth: 3
+                //                 }]
+                //             },
+                //             options: {
+                //                 responsive: true,
+                //                 loading: true,
+                //                 lineTension: 1,
+                //                 scales: {
+                //                     yAxes: [{
+                //                         ticks: {
+                //                             beginAtZero: true,
+                //                             padding: 25,
+                //                         }
+                //                     }]
+                //                 }
+                //             }
+                //         });
+                //         v.loading = false;
+                //     }
+                // }.bind(allTasks, this);//
+                // allTasks.open('GET', `${Host}/task-runs?limit=200&page=1`);
+                // allTasks.responseType = 'json';
+                // allTasks.setRequestHeader('Content-Type', 'application/json');
+                // allTasks.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+                // allTasks.send();
                 this.loading = true;
 
                 let tasksFailedData = [];
                 let tasksFailedCount = [];
-                let allFailedTasks = new XMLHttpRequest();
-                allFailedTasks.onreadystatechange = function(v) {
-                    if (allFailedTasks.readyState === 4) {
-                        let data = allFailedTasks.response.data;
-                        // console.log(data);
-                        let options = { year: 'numeric', month: 'long', day: 'numeric'};
-                        data.forEach((item) => {
-                            item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
-                            tasksFailedData.push(item.startedAt);
-                            if( item.count === 0 && item.endedAt !== 0 && item.website === webValue) {
-                                let failedTasksLength = {
-                                    count: 0
-                                };
-                                tasksFailedCount.push(Object.keys(failedTasksLength).length);
-                            }
-                        });
-                        v.chartFailedData = tasksFailedCount;
-                        // console.log(v.chartData);
-                        v.chartFailedLabels = tasksFailedData;
-                        let chart = document.getElementById('prodFailedChart');
-                        let labels = v.chartFailedLabels;
-                        let items = v.chartFailedData;
-                        let myChart = new Chart(chart, {
-                            type: 'line',
-                            data: {
-                                labels: labels,
-                                datasets: [{
-                                    label: 'Number of failed tasks',
-                                    data: items,
-                                    backgroundColor: 'rgba(227,55,7,0.3)',
-                                    borderColor: '#e33707',
-                                    borderWidth: 3
+                this.$http.get(`/task-runs?limit=200&page=1&website=${refreshQuery}`).then((response) => {
+                    let data = response.data.data;
+                    // console.log(data);
+                    let options = { year: 'numeric', month: 'long', day: 'numeric'};
+                    data.forEach((item) => {
+                        item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
+                        tasksFailedData.push(item.startedAt);
+                        if( item.count === 0 && item.endedAt !== 0 && item.website === webValue) {
+                            let failedTasksLength = {
+                                count: 0
+                            };
+                            tasksFailedCount.push(Object.keys(failedTasksLength).length);
+                        }
+                    });
+                    this.chartFailedData = tasksFailedCount;
+                    this.chartFailedLabels = tasksFailedData;
+                    let chart = document.getElementById('prodFailedChart');
+                    let labels = this.chartFailedLabels;
+                    let items = this.chartFailedData;
+                    let myChart = new Chart(chart, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Number of failed tasks',
+                                data: items,
+                                backgroundColor: 'rgba(227,55,7,0.3)',
+                                borderColor: '#e33707',
+                                borderWidth: 3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            loading: true,
+                            lineTension: 1,
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true,
+                                        padding: 25,
+                                    }
                                 }]
-                            },
-                            options: {
-                                responsive: true,
-                                loading: true,
-                                lineTension: 1,
-                                scales: {
-                                    yAxes: [{
-                                        ticks: {
-                                            beginAtZero: true,
-                                            padding: 25,
-                                        }
-                                    }]
-                                }
                             }
-                        });
-                        v.loading = false;
-                    }
-                }.bind(allFailedTasks, this);//
-                allFailedTasks.open('GET', `${Host}/task-runs?limit=200&page=1&website=${refreshQuery}`);
-                allFailedTasks.responseType = 'json';
-                allFailedTasks.setRequestHeader('Content-Type', 'application/json');
-                allFailedTasks.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
-                allFailedTasks.send();
+                        }
+                    });
+                    this.loading = false;
+                }).catch((error) => {
+                   console.log(error);
+                });
+
+                // let allFailedTasks = new XMLHttpRequest();
+                // allFailedTasks.onreadystatechange = function(v) {
+                //     if (allFailedTasks.readyState === 4) {
+                //         let data = allFailedTasks.response.data;
+                //         // console.log(data);
+                //         let options = { year: 'numeric', month: 'long', day: 'numeric'};
+                //         data.forEach((item) => {
+                //             item.startedAt = new Date(item.startedAt).toLocaleDateString("en-US", options);
+                //             tasksFailedData.push(item.startedAt);
+                //             if( item.count === 0 && item.endedAt !== 0 && item.website === webValue) {
+                //                 let failedTasksLength = {
+                //                     count: 0
+                //                 };
+                //                 tasksFailedCount.push(Object.keys(failedTasksLength).length);
+                //             }
+                //         });
+                //         v.chartFailedData = tasksFailedCount;
+                //         // console.log(v.chartData);
+                //         v.chartFailedLabels = tasksFailedData;
+                //         let chart = document.getElementById('prodFailedChart');
+                //         let labels = v.chartFailedLabels;
+                //         let items = v.chartFailedData;
+                //         let myChart = new Chart(chart, {
+                //             type: 'line',
+                //             data: {
+                //                 labels: labels,
+                //                 datasets: [{
+                //                     label: 'Number of failed tasks',
+                //                     data: items,
+                //                     backgroundColor: 'rgba(227,55,7,0.3)',
+                //                     borderColor: '#e33707',
+                //                     borderWidth: 3
+                //                 }]
+                //             },
+                //             options: {
+                //                 responsive: true,
+                //                 loading: true,
+                //                 lineTension: 1,
+                //                 scales: {
+                //                     yAxes: [{
+                //                         ticks: {
+                //                             beginAtZero: true,
+                //                             padding: 25,
+                //                         }
+                //                     }]
+                //                 }
+                //             }
+                //         });
+                //         v.loading = false;
+                //     }
+                // }.bind(allFailedTasks, this);//
+                // allFailedTasks.open('GET', `${Host}/task-runs?limit=200&page=1&website=${refreshQuery}`);
+                // allFailedTasks.responseType = 'json';
+                // allFailedTasks.setRequestHeader('Content-Type', 'application/json');
+                // allFailedTasks.setRequestHeader('Authorization', `Bearer ${localStorage.getItem('token')}`);
+                // allFailedTasks.send();
                 this.loading = true;
             }
         }
